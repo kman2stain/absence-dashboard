@@ -298,12 +298,12 @@
                 <div class="empty-state"><i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an ID or click a name</p></div>
             </div>
         </section>
-        <!-- ─── PAGE: HELP ─── -->
+       <!-- ─── PAGE: HELP ─── -->
 <section class="page" id="page-help">
     <div class="page-header">
         <div>
-            <h2><i class="fas fa-question-circle" style="color:var(--accent);margin-right:10px;"></i>Help & Format</h2>
-            <div class="subtitle">Required Excel column headings and data format</div>
+            <h2><i class="fas fa-question-circle" style="color:var(--accent);margin-right:10px;"></i>Help & Required Format</h2>
+            <div class="subtitle">Your Excel files must use the exact column headings shown below</div>
         </div>
     </div>
 
@@ -314,41 +314,35 @@
             <h3 style="margin-bottom:14px; display:flex; align-items:center; gap:10px;">
                 <i class="fas fa-file-excel" style="color:#66bb6a;"></i> File 1 – All Leave Records
             </h3>
-            <p style="color:var(--textMuted); margin-bottom:16px;">This file contains every leave entry. One row = one leave event.</p>
+            <p style="color:var(--textMuted); margin-bottom:16px;">Each row = one leave event. Column order does not matter.</p>
 
             <table style="width:100%; border-collapse:collapse; font-size:14px;">
                 <thead>
                     <tr style="background:var(--surface2); color:var(--textMuted); font-weight:600;">
-                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Column</th>
-                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Accepted Headings</th>
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Column Heading</th>
                         <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Example</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Date</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Date</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">25.04.2026<br>or 2026-04-25<br>or Excel serial (e.g. 46151)</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600;">Date</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">11.01.2026</td>
                     </tr>
                     <tr style="background:var(--bg);">
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Employee No.</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Emp No. / EmpNo / EmpID</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">1001</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600;">Emp No.</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">26</td>
                     </tr>
                     <tr>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Name</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Name</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">John Smith (optional – will be filled from Cadre)</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600;">Name</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Rovin Krishantha <br><small style="color:var(--textMuted);">(optional – will be filled from Cadre)</small></td>
                     </tr>
                     <tr style="background:var(--bg);">
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Department</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Department / Dept</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Warehouse (optional)</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600;">Department</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Security <br><small style="color:var(--textMuted);">(optional)</small></td>
                     </tr>
                     <tr>
-                        <td style="padding:10px 14px;">Leave Type</td>
-                        <td style="padding:10px 14px; color:var(--textMuted);">LeaveType / Leave Type / Type</td>
-                        <td style="padding:10px 14px;">Sick Leave, Short Leave, Authorized Leave, etc.</td>
+                        <td style="padding:10px 14px; font-weight:600;">LeaveType</td>
+                        <td style="padding:10px 14px; color:var(--textMuted);">Day Off / Sick Leave / Authorized Leave …</td>
                     </tr>
                 </tbody>
             </table>
@@ -357,33 +351,29 @@
         <!-- File 2: Cadre -->
         <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px;">
             <h3 style="margin-bottom:14px; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-file-excel" style="color:#42a5f5;"></i> File 2 – Full Cadre Details
+                <i class="fas fa-file-excel" style="color:#42a5f5;"></i> File 2 – Full Cadre (Employee Master)
             </h3>
-            <p style="color:var(--textMuted); margin-bottom:16px;">Master list of all employees. Must contain every employee who could appear in the leave file.</p>
+            <p style="color:var(--textMuted); margin-bottom:16px;">Must contain every employee who could appear in the leave file.</p>
 
             <table style="width:100%; border-collapse:collapse; font-size:14px;">
                 <thead>
                     <tr style="background:var(--surface2); color:var(--textMuted); font-weight:600;">
-                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Column</th>
-                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Accepted Headings</th>
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Column Heading</th>
                         <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Example</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Employee No.</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Emp. No. / EmpNo / EmpID</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">1001</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600;">Emp. No.</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">15</td>
                     </tr>
                     <tr style="background:var(--bg);">
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Name</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Name</td>
-                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">John Smith</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600;">Name</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Prasanna Perera</td>
                     </tr>
                     <tr>
-                        <td style="padding:10px 14px;">Department</td>
-                        <td style="padding:10px 14px; color:var(--textMuted);">Department / Dept</td>
-                        <td style="padding:10px 14px;">Warehouse</td>
+                        <td style="padding:10px 14px; font-weight:600;">Department</td>
+                        <td style="padding:10px 14px; color:var(--textMuted);">Admin</td>
                     </tr>
                 </tbody>
             </table>
@@ -391,8 +381,8 @@
 
         <!-- Leave Type Values -->
         <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px;">
-            <h3 style="margin-bottom:14px;"><i class="fas fa-tags" style="color:var(--accent); margin-right:10px;"></i>Valid Leave Types</h3>
-            <p style="color:var(--textMuted); margin-bottom:12px;">These are the recognized leave types – any other value will be grouped as "Other".</p>
+            <h3 style="margin-bottom:14px;"><i class="fas fa-tags" style="color:var(--accent); margin-right:10px;"></i>Valid LeaveType Values</h3>
+            <p style="color:var(--textMuted); margin-bottom:12px;">Any other value will be shown as "Other".</p>
             <div style="display:flex; flex-wrap:wrap; gap:8px;">
                 <span class="category-chip" style="border-color:#ef5350;"><span class="dot" style="background:#ef5350;"></span>Sick Leave</span>
                 <span class="category-chip" style="border-color:#ffa726;"><span class="dot" style="background:#ffa726;"></span>Short Leave</span>
@@ -410,17 +400,16 @@
             <h3 style="margin-bottom:14px;"><i class="fas fa-calendar-alt" style="color:var(--accent); margin-right:10px;"></i>Date Format</h3>
             <p style="color:var(--textMuted);">Dates can be entered in any of these formats:</p>
             <ul style="color:var(--textMuted); margin-left:20px; margin-top:8px; line-height:1.8;">
-                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD.MM.YYYY</code>  →  25.04.2026</li>
-                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD/MM/YYYY</code>  →  25/04/2026</li>
-                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD-MM-YYYY</code>  →  25-04-2026</li>
-                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">YYYY-MM-DD</code>  →  2026-04-25</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD.MM.YYYY</code>  →  11.01.2026</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD/MM/YYYY</code>  →  11/01/2026</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD-MM-YYYY</code>  →  11-01-2026</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">YYYY-MM-DD</code>  →  2026-01-11</li>
                 <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">Excel serial number</code>  →  46151</li>
             </ul>
         </div>
 
     </div>
 </section>
-
         <!-- ─── PAGE: LEADERBOARD ─── -->
         <section class="page" id="page-leaderboard">
             <div class="page-header">
