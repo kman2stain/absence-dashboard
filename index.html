@@ -196,7 +196,11 @@
         <button class="nav-item" data-page="page-department"><i class="fas fa-users"></i> <span>Department</span> <span class="badge" id="deptBadge">—</span></button>
         <button class="nav-item" data-page="page-employee"><i class="fas fa-user"></i> <span>Employee</span></button>
         <button class="nav-item" data-page="page-leaderboard"><i class="fas fa-trophy"></i> <span>Leaderboard</span> <span class="badge">Top 10</span></button>
-        <div class="sidebar-footer"><i class="fas fa-database" style="margin-right:6px;"></i> v1.0</div>
+        <button class="nav-item" data-page="page-help">
+    <i class="fas fa-question-circle"></i>
+    <span>Help</span>
+</button>
+        </main><i class="fas fa-database" style="margin-right:6px;"></i> v1.0</div>
     </aside>
 
     <!-- ─── MAIN ─── -->
@@ -294,6 +298,128 @@
                 <div class="empty-state"><i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an ID or click a name</p></div>
             </div>
         </section>
+        <!-- ─── PAGE: HELP ─── -->
+<section class="page" id="page-help">
+    <div class="page-header">
+        <div>
+            <h2><i class="fas fa-question-circle" style="color:var(--accent);margin-right:10px;"></i>Help & Format</h2>
+            <div class="subtitle">Required Excel column headings and data format</div>
+        </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:24px; max-width:900px;">
+
+        <!-- File 1: All Leave -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px;">
+            <h3 style="margin-bottom:14px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-file-excel" style="color:#66bb6a;"></i> File 1 – All Leave Records
+            </h3>
+            <p style="color:var(--textMuted); margin-bottom:16px;">This file contains every leave entry. One row = one leave event.</p>
+
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="background:var(--surface2); color:var(--textMuted); font-weight:600;">
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Column</th>
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Accepted Headings</th>
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Date</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Date</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">25.04.2026<br>or 2026-04-25<br>or Excel serial (e.g. 46151)</td>
+                    </tr>
+                    <tr style="background:var(--bg);">
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Employee No.</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Emp No. / EmpNo / EmpID</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">1001</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Name</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Name</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">John Smith (optional – will be filled from Cadre)</td>
+                    </tr>
+                    <tr style="background:var(--bg);">
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Department</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Department / Dept</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Warehouse (optional)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 14px;">Leave Type</td>
+                        <td style="padding:10px 14px; color:var(--textMuted);">LeaveType / Leave Type / Type</td>
+                        <td style="padding:10px 14px;">Sick Leave, Short Leave, Authorized Leave, etc.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- File 2: Cadre -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px;">
+            <h3 style="margin-bottom:14px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-file-excel" style="color:#42a5f5;"></i> File 2 – Full Cadre Details
+            </h3>
+            <p style="color:var(--textMuted); margin-bottom:16px;">Master list of all employees. Must contain every employee who could appear in the leave file.</p>
+
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="background:var(--surface2); color:var(--textMuted); font-weight:600;">
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Column</th>
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Accepted Headings</th>
+                        <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);">Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Employee No.</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Emp. No. / EmpNo / EmpID</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">1001</td>
+                    </tr>
+                    <tr style="background:var(--bg);">
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">Name</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--textMuted);">Name</td>
+                        <td style="padding:10px 14px; border-bottom:1px solid var(--border);">John Smith</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 14px;">Department</td>
+                        <td style="padding:10px 14px; color:var(--textMuted);">Department / Dept</td>
+                        <td style="padding:10px 14px;">Warehouse</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Leave Type Values -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px;">
+            <h3 style="margin-bottom:14px;"><i class="fas fa-tags" style="color:var(--accent); margin-right:10px;"></i>Valid Leave Types</h3>
+            <p style="color:var(--textMuted); margin-bottom:12px;">These are the recognized leave types – any other value will be grouped as "Other".</p>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <span class="category-chip" style="border-color:#ef5350;"><span class="dot" style="background:#ef5350;"></span>Sick Leave</span>
+                <span class="category-chip" style="border-color:#ffa726;"><span class="dot" style="background:#ffa726;"></span>Short Leave</span>
+                <span class="category-chip" style="border-color:#78909c;"><span class="dot" style="background:#78909c;"></span>No Records</span>
+                <span class="category-chip" style="border-color:#66bb6a;"><span class="dot" style="background:#66bb6a;"></span>Authorized Leave</span>
+                <span class="category-chip" style="border-color:#b71c1c;"><span class="dot" style="background:#b71c1c;"></span>Unauthorized Leave</span>
+                <span class="category-chip" style="border-color:#ffca28;"><span class="dot" style="background:#ffca28;"></span>Half Day</span>
+                <span class="category-chip" style="border-color:#42a5f5;"><span class="dot" style="background:#42a5f5;"></span>Day off</span>
+                <span class="category-chip" style="border-color:#ab47bc;"><span class="dot" style="background:#ab47bc;"></span>WFH</span>
+            </div>
+        </div>
+
+        <!-- Date format note -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px;">
+            <h3 style="margin-bottom:14px;"><i class="fas fa-calendar-alt" style="color:var(--accent); margin-right:10px;"></i>Date Format</h3>
+            <p style="color:var(--textMuted);">Dates can be entered in any of these formats:</p>
+            <ul style="color:var(--textMuted); margin-left:20px; margin-top:8px; line-height:1.8;">
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD.MM.YYYY</code>  →  25.04.2026</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD/MM/YYYY</code>  →  25/04/2026</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">DD-MM-YYYY</code>  →  25-04-2026</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">YYYY-MM-DD</code>  →  2026-04-25</li>
+                <li><code style="background:var(--surface2); padding:2px 8px; border-radius:4px;">Excel serial number</code>  →  46151</li>
+            </ul>
+        </div>
+
+    </div>
+</section>
 
         <!-- ─── PAGE: LEADERBOARD ─── -->
         <section class="page" id="page-leaderboard">
