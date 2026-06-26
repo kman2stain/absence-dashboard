@@ -407,39 +407,59 @@
         //  LOAD EXCEL FROM DRIVE (hidden IDs)
         // ═══════════════════════════════════════════════
         async function loadDataFromDrive() {
-            const loadingBar = $('#loadingBar');
-            loadingBar.classList.remove('hidden');
-            try {
-                const leaveUrl = `https://drive.google.com/uc?export=download&id=${LEAVE_FILE_ID}`;
-                const cadreUrl = `https://drive.google.com/uc?export=download&id=${CADRE_FILE_ID}`;
+    const loadingBar = $('#loadingBar');
+    loadingBar.classList.remove('hidden');
+    try {
+        const leaveUrl = `https://drive.google.com/uc?export=download&id=${LEAVE_FILE_ID}`;
+        const cadreUrl = `https://drive.google.com/uc?export=download&id=${CADRE_FILE_ID}`;
 
-                const [leaveResp, cadreResp] = await Promise.all([
-                    fetch(leaveUrl),
-                    fetch(cadreUrl)
-                ]);
-                if (!leaveResp.ok || !cadreResp.ok) {
-                    throw new Error('Could not download files. Check sharing permissions (must be "Anyone with the link").');
-                }
-                const leaveBuffer = await leaveResp.arrayBuffer();
-                const cadreBuffer = await cadreResp.arrayBuffer();
-
-                const leaveWb = XLSX.read(leaveBuffer, { type: 'array' });
-                const cadreWb = XLSX.read(cadreBuffer, { type: 'array' });
-                const leaveData = XLSX.utils.sheet_to_json(leaveWb.Sheets[leaveWb.SheetNames[0]]);
-                const cadreData = XLSX.utils.sheet_to_json(cadreWb.Sheets[cadreWb.SheetNames[0]]);
-
-                if (leaveData.length === 0 || cadreData.length === 0) {
-                    throw new Error('One of the Excel files appears empty.');
-                }
-                processData(leaveData, cadreData);
-                toast('Data loaded successfully', 'success');
-            } catch (err) {
-                console.error(err);
-                toast(err.message, 'error');
-            } finally {
-                loadingBar.classList.add('hidden');
+        // Helper to download with virus-scan handling
+        async function downloadDriveFile(url) {
+            let response = await fetch(url);
+            // If the response is the virus warning page, extract the confirm token
+            if (response.url.includes('confirm=')) {
+                // Already contains confirm, just return blob
+                return response.blob();
             }
+            const text = await response.text();
+            // Look for the hidden form action with confirm= parameter
+            const confirmMatch = text.match(/confirm=([^&"]+)/);
+            if (confirmMatch) {
+                const confirm = confirmMatch[1];
+                const confirmUrl = `${url}&confirm=${confirm}`;
+                response = await fetch(confirmUrl);
+            } else {
+                // If no confirm found, assume the original response is the file
+                // But we already consumed the body as text, so we need to fetch again
+                response = await fetch(url);
+            }
+            return response.blob();
         }
+
+        const leaveBlob = await downloadDriveFile(leaveUrl);
+        const cadreBlob = await downloadDriveFile(cadreUrl);
+
+        // Convert blob to arrayBuffer for SheetJS
+        const leaveBuffer = await leaveBlob.arrayBuffer();
+        const cadreBuffer = await cadreBlob.arrayBuffer();
+
+        const leaveWb = XLSX.read(leaveBuffer, { type: 'array' });
+        const cadreWb = XLSX.read(cadreBuffer, { type: 'array' });
+        const leaveData = XLSX.utils.sheet_to_json(leaveWb.Sheets[leaveWb.SheetNames[0]]);
+        const cadreData = XLSX.utils.sheet_to_json(cadreWb.Sheets[cadreWb.SheetNames[0]]);
+
+        if (leaveData.length === 0 || cadreData.length === 0) {
+            throw new Error('One of the Excel files appears empty.');
+        }
+        processData(leaveData, cadreData);
+        toast('Data loaded successfully', 'success');
+    } catch (err) {
+        console.error(err);
+        toast(err.message, 'error');
+    } finally {
+        loadingBar.classList.add('hidden');
+    }
+}
 
         // ═══════════════════════════════════════════════
         //  DATE PARSER
