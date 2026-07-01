@@ -121,44 +121,6 @@
             max-height: 100vh;
         }
 
-        .upload-zone {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-            margin-bottom: 32px;
-            background: var(--surface);
-            padding: 24px 28px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        .upload-box {
-            flex: 1;
-            min-width: 200px;
-            padding: 16px 20px;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            text-align: center;
-            cursor: pointer;
-            transition: border var(--transition), background var(--transition);
-            background: var(--bg);
-        }
-        .upload-box:hover { border-color: var(--accent); background: var(--surface2); }
-        .upload-box.uploaded { border-color: #4caf50; background: rgba(76,175,80,0.08); }
-        .upload-box i { font-size: 28px; color: var(--textMuted); margin-bottom: 6px; display: block; }
-        .upload-box .label { font-weight: 600; font-size: 14px; }
-        .upload-box .sub { font-size: 12px; color: var(--textMuted); margin-top: 4px; }
-        .upload-box input[type="file"] { display: none; }
-        .upload-status { font-size: 13px; margin-top: 8px; color: var(--textMuted); }
-        .upload-status .ok { color: #4caf50; }
-        .upload-status .err { color: #f44336; }
-
-        .upload-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
         .btn {
             padding: 10px 24px;
             border-radius: var(--radius);
@@ -517,30 +479,6 @@
         .leaderboard-table .lb-row .rank { font-weight: 700; font-size: 16px; color: var(--accent); }
         .leaderboard-table .lb-row .rate { font-weight: 600; color: var(--accent); }
 
-        /* ── Supervisor login specific ── */
-        .login-container {
-            max-width: 400px;
-            margin: 80px auto;
-            background: var(--surface);
-            padding: 40px 32px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 20px 0 16px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text);
-            font-size: 14px;
-            outline: none;
-        }
-        .login-container input[type="password"]:focus { border-color: var(--accent); }
-        .login-container .btn { width: 100%; justify-content: center; }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -558,7 +496,6 @@
             .nav-item .badge { display: none; }
             .sidebar-footer { display: none; }
             .main { padding: 20px 16px; }
-            .upload-zone { flex-direction: column; padding: 16px; }
             .employee-list .list-header, .employee-list .list-row,
             .leaderboard-table .lb-header, .leaderboard-table .lb-row {
                 grid-template-columns: 1fr 1fr;
@@ -738,10 +675,10 @@
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIG – DRIVE DIRECT DOWNLOAD LINKS
+        //  CONFIG – REPLACE WITH YOUR DEPLOYED SCRIPT URL
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        const LEAVE_FILE_URL = 'https://drive.google.com/uc?export=download&id=1k74zJ9sfBdNGBNzUEN2TCQUhRLdgdgd3';    // ← Replace with your all_leave.xlsx ID
-        const CADRE_FILE_URL = 'https://drive.google.com/uc?export=download&id=1CRurSRoiwghmZ_vaGC6aDyxuJD1hbg2w';  // ← Replace with your cadre_details.xlsx ID
+        const LEAVE_FILE_URL = 'https://script.google.com/macros/s/AKfycbwo7VtLgSEPr1WNF7wwuph2dkYXwcsoiPVu-7VjxFO-qWdIAJ2jLVC0jkpnry1pwb19eg/exec?action=getLeaveFile';
+        const CADRE_FILE_URL = 'https://script.google.com/macros/s/AKfycbwo7VtLgSEPr1WNF7wwuph2dkYXwcsoiPVu-7VjxFO-qWdIAJ2jLVC0jkpnry1pwb19eg/exec?action=getCadreFile';
 
         const LEAVE_TYPES = [
             'Sick Leave', 'Short Leave', 'No Records', 'Authorized Leave',
@@ -1253,11 +1190,17 @@
         });
         $('#empSearchInput').addEventListener('keydown', e => { if (e.key==='Enter') $('#btnSearchEmp').click(); });
 
-        // ── LOAD EXCEL FROM DRIVE (using SheetJS & fetch) ──
+        // ── LOAD EXCEL FROM DRIVE (via Apps Script proxy) ──
         async function loadExcelFromUrl(url) {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Could not fetch ${url}`);
-            const buffer = await response.arrayBuffer();
+            // Apps Script returns binary as a text string; convert to ArrayBuffer for SheetJS
+            const text = await response.text();
+            const buffer = new ArrayBuffer(text.length);
+            const view = new Uint8Array(buffer);
+            for (let i = 0; i < text.length; i++) {
+                view[i] = text.charCodeAt(i) & 0xFF;
+            }
             const workbook = XLSX.read(buffer, { type: 'array' });
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             return XLSX.utils.sheet_to_json(sheet);
