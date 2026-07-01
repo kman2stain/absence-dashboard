@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Absence Dashboard — Warehouse</title>
 
-    <!-- Chart.js & SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <style>
@@ -611,45 +608,31 @@
 </head>
 <body>
 
-    <!-- ─── SIDEBAR ─── -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <i class="fas fa-warehouse"></i>
             <span class="brand-text">Absence</span>
         </div>
         <button class="nav-item active" data-page="page-company">
-            <i class="fas fa-building"></i>
-            <span>Company</span>
-            <span class="badge" id="deptCount">0</span>
+            <i class="fas fa-building"></i><span>Company</span><span class="badge" id="deptCount">0</span>
         </button>
         <button class="nav-item" data-page="page-department">
-            <i class="fas fa-users"></i>
-            <span>Department</span>
-            <span class="badge" id="deptBadge">—</span>
+            <i class="fas fa-users"></i><span>Department</span><span class="badge" id="deptBadge">—</span>
         </button>
         <button class="nav-item" data-page="page-employee">
-            <i class="fas fa-user"></i>
-            <span>Employee</span>
+            <i class="fas fa-user"></i><span>Employee</span>
         </button>
         <button class="nav-item" data-page="page-leaderboard">
-            <i class="fas fa-trophy"></i>
-            <span>Leaderboard</span>
-            <span class="badge">Top 10</span>
-        </button>
-        <!-- Supervisor page (NEW) -->
-        <button class="nav-item" data-page="page-supervisor">
-            <i class="fas fa-shield-alt"></i>
-            <span>Supervisor</span>
+            <i class="fas fa-trophy"></i><span>Leaderboard</span><span class="badge">Top 10</span>
         </button>
         <div class="sidebar-footer">
             <i class="fas fa-database" style="margin-right:6px;"></i> v1.0
         </div>
     </aside>
 
-    <!-- ─── MAIN ─── -->
     <main class="main" id="mainContent">
 
-        <!-- ─── PAGE: COMPANY ─── -->
+        <!-- COMPANY PAGE -->
         <section class="page active" id="page-company">
             <div class="page-header">
                 <div>
@@ -664,9 +647,7 @@
                     <button class="btn btn-primary" id="btnApplyDate"><i class="fas fa-sync"></i> Apply</button>
                 </div>
             </div>
-
             <div class="category-filters" id="categoryFiltersCompany"></div>
-
             <div class="chart-wrapper">
                 <canvas id="companyChart"></canvas>
             </div>
@@ -675,7 +656,7 @@
             </div>
         </section>
 
-        <!-- ─── PAGE: DEPARTMENT ─── -->
+        <!-- DEPARTMENT PAGE -->
         <section class="page" id="page-department">
             <div class="page-header">
                 <div>
@@ -689,35 +670,27 @@
                     <button class="btn btn-primary" id="btnGoDept"><i class="fas fa-arrow-right"></i> View</button>
                 </div>
             </div>
-
             <div class="category-filters" id="categoryFiltersDept"></div>
-
             <div class="dept-summary" id="deptSummary">
                 <div class="stat"><div class="number" id="deptAbsenceRate">—</div><div class="label">Absence Rate</div></div>
                 <div class="stat"><div class="number" id="deptEmpCount">—</div><div class="label">Employees</div></div>
                 <div class="stat"><div class="number" id="deptLeaveCount">—</div><div class="label">Leave Records</div></div>
                 <div class="stat"><div class="number" id="deptWorkingDays">—</div><div class="label">Working Days</div></div>
             </div>
-
             <h4 style="margin-bottom:12px;font-weight:500;color:var(--textMuted);">
                 <i class="fas fa-list-ol"></i> All Employees — sorted by absence rate (highest first)
             </h4>
             <div class="employee-list" id="deptEmployeeList">
                 <div class="list-header">
-                    <span>Employee</span>
-                    <span>Emp No.</span>
-                    <span>Leave Days</span>
-                    <span>Absence Rate</span>
+                    <span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span>
                 </div>
                 <div class="empty-state" style="padding:32px 12px;">
-                    <i class="fas fa-inbox"></i>
-                    <h3>No data</h3>
-                    <p>Select a department to see employees</p>
+                    <i class="fas fa-inbox"></i><h3>No data</h3><p>Select a department to see employees</p>
                 </div>
             </div>
         </section>
 
-        <!-- ─── PAGE: EMPLOYEE ─── -->
+        <!-- EMPLOYEE PAGE -->
         <section class="page" id="page-employee">
             <div class="page-header">
                 <div>
@@ -725,21 +698,18 @@
                     <div class="subtitle">Search by employee ID or select from department list</div>
                 </div>
                 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-                    <input type="text" id="empSearchInput" placeholder="Enter Emp. No. (e.g. 1001)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:40px;font-size:14px;outline:none;width:200px;transition:border var(--transition);" />
+                    <input type="text" id="empSearchInput" placeholder="Enter Emp. No. (e.g. 1001)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:40px;font-size:14px;outline:none;width:200px;" />
                     <button class="btn btn-primary" id="btnSearchEmp"><i class="fas fa-search"></i> Search</button>
                 </div>
             </div>
-
             <div id="employeeProfile">
                 <div class="empty-state" style="padding:40px 12px;">
-                    <i class="fas fa-user-circle"></i>
-                    <h3>Search for an employee</h3>
-                    <p>Enter an employee ID above or click a name from the department list</p>
+                    <i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an employee ID above or click a name from the department list</p>
                 </div>
             </div>
         </section>
 
-        <!-- ─── PAGE: LEADERBOARD ─── -->
+        <!-- LEADERBOARD PAGE -->
         <section class="page" id="page-leaderboard">
             <div class="page-header">
                 <div>
@@ -751,339 +721,115 @@
                     <span id="lbPeriod" style="font-weight:500;">—</span>
                 </div>
             </div>
-
             <div class="category-filters" id="categoryFiltersLB"></div>
-
             <div class="leaderboard-table" id="leaderboardTable">
                 <div class="lb-header">
-                    <span>#</span>
-                    <span>Employee</span>
-                    <span>Department</span>
-                    <span>Emp No.</span>
-                    <span>Absence Rate</span>
+                    <span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span>
                 </div>
                 <div class="empty-state" style="padding:40px 12px;">
-                    <i class="fas fa-chart-simple"></i>
-                    <h3>No data</h3>
-                    <p>Upload and process data to see the leaderboard</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ─── PAGE: SUPERVISOR ─── -->
-        <section class="page" id="page-supervisor">
-            <div class="page-header">
-                <div>
-                    <h2><i class="fas fa-shield-alt" style="color:var(--accent);margin-right:10px;"></i>Supervisor Panel</h2>
-                    <div class="subtitle" id="supervisorStatus">Login to upload new absence data</div>
-                </div>
-            </div>
-            <div id="supervisorContent">
-                <!-- Login form (visible when not logged in) -->
-                <div class="login-container" id="loginForm">
-                    <i class="fas fa-lock" style="font-size:40px;color:var(--textMuted);margin-bottom:12px;"></i>
-                    <h3>Supervisor Login</h3>
-                    <p style="color:var(--textMuted);font-size:14px;margin:8px 0 0;">Enter password to access upload</p>
-                    <input type="password" id="supervisorPassword" placeholder="Password" />
-                    <button class="btn btn-primary" id="btnLogin">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </button>
-                    <p style="color:var(--textMuted);font-size:12px;margin-top:12px;">Default: admin123</p>
-                </div>
-
-                <!-- Upload section (visible after login) -->
-                <div id="uploadSection" style="display:none;">
-                    <div class="upload-zone" style="margin-bottom:24px;">
-                        <div class="upload-box" id="supUploadLeave">
-                            <i class="fas fa-file-excel"></i>
-                            <div class="label">📄 All Leave File</div>
-                            <div class="sub">.xlsx — leave records</div>
-                            <input type="file" accept=".xlsx,.xls" id="supFileLeave" />
-                            <div class="upload-status" id="supStatusLeave">No file selected</div>
-                        </div>
-                        <div class="upload-box" id="supUploadCadre">
-                            <i class="fas fa-file-excel"></i>
-                            <div class="label">📋 Full Cadre Details</div>
-                            <div class="sub">.xlsx — employee master</div>
-                            <input type="file" accept=".xlsx,.xls" id="supFileCadre" />
-                            <div class="upload-status" id="supStatusCadre">No file selected</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" id="btnSupProcess" style="width:200px;">
-                        <i class="fas fa-upload"></i> Upload & Process
-                    </button>
-                    <button class="btn btn-danger" id="btnSupLogout" style="margin-left:12px;">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                    <p style="color:var(--textMuted);font-size:13px;margin-top:16px;">
-                        <i class="fas fa-info-circle"></i> Uploading will replace the current dashboard data for all users on this browser.
-                    </p>
+                    <i class="fas fa-chart-simple"></i><h3>No data</h3><p>Ask the supervisor to update the Excel files in Drive</p>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- ─── TOAST ─── -->
     <div class="toast" id="toast"></div>
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIG – PATHS TO PRE‑STORED EXCEL FILES (fallback)
+        //  CONFIG – DRIVE DIRECT DOWNLOAD LINKS
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        const LEAVE_FILE_URL = 'data/all_leave.xlsx';      // ← Change to your file path/name
-        const CADRE_FILE_URL = 'data/cadre_details.xlsx';  // ← Change to your file path/name
-        const SUPERVISOR_PASSWORD = 'admin123';            // ← Change the password here
+        const LEAVE_FILE_URL = 'https://drive.google.com/uc?export=download&id=1k74zJ9sfBdNGBNzUEN2TCQUhRLdgdgd3';    // ← Replace with your all_leave.xlsx ID
+        const CADRE_FILE_URL = 'https://drive.google.com/uc?export=download&id=1CRurSRoiwghmZ_vaGC6aDyxuJD1hbg2w';  // ← Replace with your cadre_details.xlsx ID
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  LEAVE TYPES & COLORS
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const LEAVE_TYPES = [
             'Sick Leave', 'Short Leave', 'No Records', 'Authorized Leave',
             'Unauthorized Leave', 'Half Day', 'Day off', 'WFH'
         ];
-
         const TYPE_COLORS = {
-            'Sick Leave': '#ef5350',
-            'Short Leave': '#ffa726',
-            'No Records': '#78909c',
-            'Authorized Leave': '#66bb6a',
-            'Unauthorized Leave': '#b71c1c',
-            'Half Day': '#ffca28',
-            'Day off': '#42a5f5',
-            'WFH': '#ab47bc',
+            'Sick Leave': '#ef5350', 'Short Leave': '#ffa726', 'No Records': '#78909c',
+            'Authorized Leave': '#66bb6a', 'Unauthorized Leave': '#b71c1c', 'Half Day': '#ffca28',
+            'Day off': '#42a5f5', 'WFH': '#ab47bc',
         };
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  STATE
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         let state = {
-            employees: [],
-            leaves: [],
-            fromDate: null,
-            toDate: null,
-            activeCategories: [...LEAVE_TYPES],
-            currentDept: null,
-            currentEmp: null,
-            companyChart: null,
+            employees: [], leaves: [], fromDate: null, toDate: null,
+            activeCategories: [...LEAVE_TYPES], currentDept: null, currentEmp: null, companyChart: null,
         };
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  DOM REFS (only the ones still needed)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const $ = (sel) => document.querySelector(sel);
         const $$ = (sel) => document.querySelectorAll(sel);
 
-        const btnApplyDate = $('#btnApplyDate');
-        const fromDate = $('#fromDate');
-        const toDate = $('#toDate');
-        const deptSelector = $('#deptSelector');
-        const btnGoDept = $('#btnGoDept');
-        const empSearchInput = $('#empSearchInput');
-        const btnSearchEmp = $('#btnSearchEmp');
-
-        // Supervisor elements
-        const supFileLeave = $('#supFileLeave');
-        const supFileCadre = $('#supFileCadre');
-        const supStatusLeave = $('#supStatusLeave');
-        const supStatusCadre = $('#supStatusCadre');
-        const btnSupProcess = $('#btnSupProcess');
-        const btnSupLogout = $('#btnSupLogout');
-        const loginForm = $('#loginForm');
-        const uploadSection = $('#uploadSection');
-        const supervisorPassword = $('#supervisorPassword');
-        const btnLogin = $('#btnLogin');
-        const supervisorStatus = $('#supervisorStatus');
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  LOCAL STORAGE KEYS
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        const LS_LEAVE_KEY = 'absence_dashboard_leave_data';
-        const LS_CADRE_KEY = 'absence_dashboard_cadre_data';
-        const LS_SUPERVISOR_LOGGED = 'absence_supervisor_logged_in';
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  TOAST
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function toast(msg, type = 'info', duration = 3200) {
+        function toast(msg, type='info', duration=3200) {
             const el = $('#toast');
-            el.className = 'toast show';
-            el.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${msg}`;
-            el.style.borderColor = type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : 'var(--border)';
+            el.className = `toast show`;
+            el.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-exclamation-circle':'fa-info-circle'}"></i> ${msg}`;
+            el.style.borderColor = type==='success'?'#4caf50':type==='error'?'#f44336':'var(--border)';
             clearTimeout(el._timer);
             el._timer = setTimeout(() => el.classList.remove('show'), duration);
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  SUPERVISOR UPLOAD
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        let supLeaveData = null;
-        let supCadreData = null;
-
-        $('#supUploadLeave').addEventListener('click', () => supFileLeave.click());
-        $('#supUploadCadre').addEventListener('click', () => supFileCadre.click());
-
-        supFileLeave.addEventListener('change', (e) => {
-            const f = e.target.files[0];
-            if (!f) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const wb = XLSX.read(ev.target.result, { type: 'array' });
-                    const sheet = wb.Sheets[wb.SheetNames[0]];
-                    supLeaveData = XLSX.utils.sheet_to_json(sheet);
-                    supStatusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${supLeaveData.length} rows)</span>`;
-                    $('#supUploadLeave').classList.add('uploaded');
-                } catch (err) {
-                    supStatusLeave.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
-                }
-            };
-            reader.readAsArrayBuffer(f);
-        });
-
-        supFileCadre.addEventListener('change', (e) => {
-            const f = e.target.files[0];
-            if (!f) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const wb = XLSX.read(ev.target.result, { type: 'array' });
-                    const sheet = wb.Sheets[wb.SheetNames[0]];
-                    supCadreData = XLSX.utils.sheet_to_json(sheet);
-                    supStatusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${supCadreData.length} rows)</span>`;
-                    $('#supUploadCadre').classList.add('uploaded');
-                } catch (err) {
-                    supStatusCadre.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
-                }
-            };
-            reader.readAsArrayBuffer(f);
-        });
-
-        btnSupProcess.addEventListener('click', () => {
-            if (!supLeaveData || !supCadreData) {
-                toast('Please select both Excel files first.', 'error');
-                return;
-            }
-            // Save to localStorage
-            localStorage.setItem(LS_LEAVE_KEY, JSON.stringify(supLeaveData));
-            localStorage.setItem(LS_CADRE_KEY, JSON.stringify(supCadreData));
-            toast('Data uploaded! The dashboard will now use the new files.', 'success');
-            // Reload the main dashboard data
-            loadDataFromLocalStorageOrFallback();
-        });
-
-        btnSupLogout.addEventListener('click', () => {
-            localStorage.removeItem(LS_SUPERVISOR_LOGGED);
-            supLeaveData = null;
-            supCadreData = null;
-            supStatusLeave.innerHTML = 'No file selected';
-            supStatusCadre.innerHTML = 'No file selected';
-            $('#supUploadLeave').classList.remove('uploaded');
-            $('#supUploadCadre').classList.remove('uploaded');
-            supFileLeave.value = '';
-            supFileCadre.value = '';
-            loginForm.style.display = 'block';
-            uploadSection.style.display = 'none';
-            supervisorStatus.textContent = 'Login to upload new absence data';
-            toast('Logged out from supervisor panel', 'info');
-        });
-
-        // Supervisor login
-        function checkSupervisorLogin() {
-            if (localStorage.getItem(LS_SUPERVISOR_LOGGED) === 'true') {
-                showUploadSection();
-            } else {
-                loginForm.style.display = 'block';
-                uploadSection.style.display = 'none';
-                supervisorStatus.textContent = 'Login to upload new absence data';
-            }
-        }
-
-        function showUploadSection() {
-            loginForm.style.display = 'none';
-            uploadSection.style.display = 'block';
-            supervisorStatus.textContent = 'Upload new Excel files to update the dashboard';
-            supervisorPassword.value = '';
-        }
-
-        btnLogin.addEventListener('click', () => {
-            if (supervisorPassword.value === SUPERVISOR_PASSWORD) {
-                localStorage.setItem(LS_SUPERVISOR_LOGGED, 'true');
-                showUploadSection();
-                toast('Logged in as supervisor', 'success');
-            } else {
-                toast('Incorrect password', 'error');
-            }
-        });
-
-        supervisorPassword.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') btnLogin.click();
-        });
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  DATE PARSER (supports DD.MM.YYYY, Excel serial, etc.)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── DATE PARSER ──
         function parseDate(dateStr) {
             if (!dateStr) return null;
-            const str = dateStr.trim();
+            const str = String(dateStr).trim();
             let d = null;
-
-            // 1) Try DD.MM.YYYY (with dots, slashes, dashes)
             let normalized = str.replace(/[\.\-]/g, '/');
             let parts = normalized.split('/');
             if (parts.length === 3) {
                 let day, month, year;
                 if (parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                    day = parseInt(parts[0], 10);
-                    month = parseInt(parts[1], 10) - 1;
-                    year = parseInt(parts[2], 10);
-                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                        const test = new Date(year, month, day);
+                    day = parseInt(parts[0],10); month = parseInt(parts[1],10)-1; year = parseInt(parts[2],10);
+                    if (!isNaN(day)&&!isNaN(month)&&!isNaN(year)) {
+                        const test = new Date(year,month,day);
                         if (!isNaN(test.getTime())) d = test;
                     }
-                } else if (parts[0].length === 4 && parts[1].length === 2 && parts[2].length === 2) {
-                    year = parseInt(parts[0], 10);
-                    month = parseInt(parts[1], 10) - 1;
-                    day = parseInt(parts[2], 10);
-                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                        const test = new Date(year, month, day);
+                } else if (parts[0].length===4 && parts[1].length===2 && parts[2].length===2) {
+                    year = parseInt(parts[0],10); month = parseInt(parts[1],10)-1; day = parseInt(parts[2],10);
+                    if (!isNaN(day)&&!isNaN(month)&&!isNaN(year)) {
+                        const test = new Date(year,month,day);
                         if (!isNaN(test.getTime())) d = test;
                     }
                 }
             }
-
-            // 2) Excel serial number
             if (!d) {
                 const isNumeric = /^[0-9]+$/.test(str);
                 if (isNumeric) {
-                    const num = parseInt(str, 10);
-                    if (num > 0 && num < 100000) {
-                        const excelEpoch = new Date(1899, 11, 30);
+                    const num = parseInt(str,10);
+                    if (num>0 && num<100000) {
+                        const excelEpoch = new Date(1899,11,30);
                         const msPerDay = 86400000;
                         const dateObj = new Date(excelEpoch.getTime() + num * msPerDay);
                         if (!isNaN(dateObj.getTime())) d = dateObj;
                     }
                 }
             }
-
-            // 3) Fallback: native Date
             if (!d) {
                 const test = new Date(str);
                 if (!isNaN(test.getTime())) d = test;
             }
-
             return d;
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PROCESS DATA
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── WORKING DAYS ──
+        function getWorkingDays(from, to) {
+            let count = 0;
+            const d = new Date(from);
+            while (d <= to) {
+                const day = d.getDay();
+                if (day !== 0 && day !== 6) count++;
+                d.setDate(d.getDate() + 1);
+            }
+            return count || 1;
+        }
+
+        // ── PROCESS DATA ──
         function processData(leaveFileData, cadreFileData) {
             if (!leaveFileData || !cadreFileData) {
-                toast('No data available. Please upload via Supervisor panel.', 'error');
+                toast('No data available. Check the Drive files.', 'error');
                 return;
             }
-
             try {
                 const norm = (row) => {
                     const out = {};
@@ -1093,8 +839,6 @@
                     }
                     return out;
                 };
-
-                // Employees
                 const empMap = {};
                 const employees = [];
                 for (const row of cadreFileData) {
@@ -1107,8 +851,6 @@
                         employees.push(empMap[empNo]);
                     }
                 }
-
-                // Leaves
                 const leaves = [];
                 for (const row of leaveFileData) {
                     const n = norm(row);
@@ -1117,59 +859,41 @@
                     const name = String(n['name'] || '').trim();
                     const dept = String(n['department'] || n['dept'] || '').trim();
                     const leaveType = String(n['leavetype'] || n['leave type'] || n['type'] || '').trim();
-
                     if (!dateStr || !empNo) continue;
-
                     const d = parseDate(dateStr);
-                    if (!d) {
-                        console.warn('Could not parse date:', dateStr);
-                        continue;
-                    }
-
+                    if (!d) { console.warn('Could not parse date:', dateStr); continue; }
                     const deptFinal = dept || (empMap[empNo] ? empMap[empNo].department : 'Unknown');
                     const nameFinal = name || (empMap[empNo] ? empMap[empNo].name : empNo);
                     leaves.push({
-                        date: d,
-                        dateStr: d.toISOString().slice(0, 10),
-                        empNo,
-                        name: nameFinal,
-                        department: deptFinal,
+                        date: d, dateStr: d.toISOString().slice(0,10), empNo, name: nameFinal, department: deptFinal,
                         leaveType: LEAVE_TYPES.includes(leaveType) ? leaveType : 'Other',
                     });
                 }
-
-                // Update employee departments if missing
                 for (const e of employees) {
                     if (e.department === 'Unknown') {
                         const found = leaves.find(l => l.empNo === e.empNo);
                         if (found) e.department = found.department;
                     }
                 }
-
                 state.employees = employees;
                 state.leaves = leaves;
-
-                // Set default date range
                 if (leaves.length > 0) {
                     const dates = leaves.map(l => l.date);
                     const min = new Date(Math.min(...dates.map(d => d.getTime())));
                     const max = new Date(Math.max(...dates.map(d => d.getTime())));
                     state.fromDate = min;
                     state.toDate = max;
-                    fromDate.value = min.toISOString().slice(0, 10);
-                    toDate.value = max.toISOString().slice(0, 10);
+                    $('#fromDate').value = min.toISOString().slice(0,10);
+                    $('#toDate').value = max.toISOString().slice(0,10);
                 } else {
-                    const now = new Date();
-                    const monthAgo = new Date(now);
-                    monthAgo.setMonth(monthAgo.getMonth() - 1);
-                    state.fromDate = monthAgo;
-                    state.toDate = now;
-                    fromDate.value = monthAgo.toISOString().slice(0, 10);
-                    toDate.value = now.toISOString().slice(0, 10);
-                    toast('No valid leave records found. Check date format.', 'info');
+                    const now = new Date(); const monthAgo = new Date(now);
+                    monthAgo.setMonth(monthAgo.getMonth()-1);
+                    state.fromDate = monthAgo; state.toDate = now;
+                    $('#fromDate').value = monthAgo.toISOString().slice(0,10);
+                    $('#toDate').value = now.toISOString().slice(0,10);
+                    toast('No valid leave records found.', 'info');
                 }
-
-                $('#deptCount').textContent = [...new Set(employees.map(e => e.department))].length;
+                $('#deptCount').textContent = [...new Set(employees.map(e=>e.department))].length;
                 populateDeptSelector();
                 renderCategoryChips();
                 applyFilters(true);
@@ -1180,110 +904,31 @@
             }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  DATE RANGE
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        btnApplyDate.addEventListener('click', () => {
-            const from = new Date(fromDate.value);
-            const to = new Date(toDate.value);
-            if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-                toast('Please select valid dates', 'error');
-                return;
-            }
-            if (from > to) {
-                toast('From date must be before To date', 'error');
-                return;
-            }
-            state.fromDate = from;
-            state.toDate = to;
-            applyFilters(true);
-            toast('Date range updated', 'success');
-        });
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CATEGORY FILTERS
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function renderCategoryChips() {
-            const targets = [
-                $('#categoryFiltersCompany'),
-                $('#categoryFiltersDept'),
-                $('#categoryFiltersLB'),
-            ];
-            const html = LEAVE_TYPES.map(type => {
-                const active = state.activeCategories.includes(type) ? 'active' : '';
-                const color = TYPE_COLORS[type] || '#999';
-                return `<span class="category-chip ${active}" data-type="${type}" style="border-color:${active ? color : 'var(--border)'};">
-                            <span class="dot" style="background:${color};"></span>
-                            ${type}
-                        </span>`;
-            }).join('');
-
-            for (const el of targets) {
-                if (el) {
-                    el.innerHTML = html;
-                    el.querySelectorAll('.category-chip').forEach(chip => {
-                        chip.addEventListener('click', () => {
-                            const type = chip.dataset.type;
-                            const idx = state.activeCategories.indexOf(type);
-                            if (idx > -1) {
-                                state.activeCategories.splice(idx, 1);
-                            } else {
-                                state.activeCategories.push(type);
-                            }
-                            renderCategoryChips();
-                            applyFilters(true);
-                        });
-                    });
-                }
-            }
-        }
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  FILTER LEAVES
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── GET FILTERED LEAVES ──
         function getFilteredLeaves() {
             if (!state.fromDate || !state.toDate) return [];
-            const from = new Date(state.fromDate);
-            const to = new Date(state.toDate);
-            from.setHours(0, 0, 0, 0);
-            to.setHours(23, 59, 59, 999);
+            const from = new Date(state.fromDate); from.setHours(0,0,0,0);
+            const to = new Date(state.toDate); to.setHours(23,59,59,999);
             return state.leaves.filter(l => {
                 const d = new Date(l.date);
                 return d >= from && d <= to && state.activeCategories.includes(l.leaveType);
             });
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  COMPUTE RATES
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function getWorkingDays(from, to) {
-            let count = 0;
-            const d = new Date(from);
-            while (d <= to) {
-                const day = d.getDay();
-                if (day !== 0 && day !== 6) count++;
-                d.setDate(d.getDate() + 1);
-            }
-            return count || 1;
-        }
-
+        // ── COMPUTE RATES ──
         function computeRates() {
             const filtered = getFilteredLeaves();
             const workingDays = getWorkingDays(state.fromDate, state.toDate);
-
             const empRates = {};
             for (const e of state.employees) {
                 const leaves = filtered.filter(l => l.empNo === e.empNo);
                 empRates[e.empNo] = {
-                    empNo: e.empNo,
-                    name: e.name,
-                    department: e.department,
+                    empNo: e.empNo, name: e.name, department: e.department,
                     leaveCount: leaves.length,
                     rate: (leaves.length / workingDays) * 100,
                     leaves,
                 };
             }
-
             const deptMap = {};
             for (const e of state.employees) {
                 const dept = e.department;
@@ -1292,37 +937,25 @@
             }
             for (const [dept, data] of Object.entries(deptMap)) {
                 let total = 0;
-                for (const empNo of data.employees) {
-                    total += empRates[empNo] ? empRates[empNo].leaveCount : 0;
-                }
+                for (const empNo of data.employees) total += empRates[empNo] ? empRates[empNo].leaveCount : 0;
                 data.totalLeaves = total;
                 const empCount = data.employees.length || 1;
                 data.rate = (total / (empCount * workingDays)) * 100;
                 data.empCount = empCount;
             }
-
             return { empRates, deptMap, workingDays, filtered };
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER: COMPANY CHART
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── RENDER COMPANY CHART ──
         function renderCompanyChart() {
             const { deptMap } = computeRates();
-            const sorted = Object.entries(deptMap).sort((a, b) => b[1].rate - a[1].rate);
-
+            const sorted = Object.entries(deptMap).sort((a,b) => b[1].rate - a[1].rate);
             const labels = sorted.map(([name]) => name);
-            const rates = sorted.map(([, data]) => Math.min(data.rate, 100));
-
+            const rates = sorted.map(([,data]) => Math.min(data.rate, 100));
             const maxRate = rates.length ? Math.max(...rates) : 0;
             const suggestedMax = Math.min(100, Math.ceil((maxRate + 5) / 5) * 5);
-
             const ctx = document.getElementById('companyChart').getContext('2d');
-
-            if (state.companyChart) {
-                state.companyChart.destroy();
-            }
-
+            if (state.companyChart) state.companyChart.destroy();
             state.companyChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1330,9 +963,7 @@
                     datasets: [{
                         label: 'Absence Rate %',
                         data: rates,
-                        backgroundColor: rates.map(r =>
-                            r > 30 ? '#ef5350' : r > 15 ? '#ffa726' : '#66bb6a'
-                        ),
+                        backgroundColor: rates.map(r => r > 30 ? '#ef5350' : r > 15 ? '#ffa726' : '#66bb6a'),
                         borderColor: 'rgba(255,255,255,0.15)',
                         borderWidth: 1,
                         borderRadius: 4,
@@ -1343,556 +974,318 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (ctx) => {
-                                    const val = ctx.parsed.x;
-                                    const dept = ctx.label;
-                                    const info = deptMap[dept] || {};
-                                    return `Rate: ${val.toFixed(1)}%  •  ${info.empCount || 0} employees  •  ${info.totalLeaves || 0} leave records`;
-                                }
-                            }
-                        }
+                    plugins: { legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => {
+                            const val = ctx.parsed.x; const dept = ctx.label;
+                            const info = deptMap[dept] || {};
+                            return `Rate: ${val.toFixed(1)}%  •  ${info.empCount||0} employees  •  ${info.totalLeaves||0} leave records`;
+                        }}}
                     },
                     scales: {
-                        x: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#99a4c2', callback: (v) => v + '%' },
-                            max: Math.max(10, suggestedMax + 5),
-                        },
-                        y: {
-                            grid: { display: false },
-                            ticks: {
-                                color: '#99a4c2',
-                                font: { weight: '500' },
-                            }
-                        }
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#99a4c2', callback: v => v+'%' }, max: Math.max(10, suggestedMax+5) },
+                        y: { grid: { display: false }, ticks: { color: '#99a4c2', font: { weight:'500' } } }
                     },
                     onClick: (e, elements) => {
                         if (elements.length > 0) {
-                            const idx = elements[0].index;
-                            const dept = labels[idx];
-                            if (dept) {
-                                state.currentDept = dept;
-                                $('#deptBadge').textContent = dept;
-                                renderDepartmentView(dept);
-                            }
+                            const idx = elements[0].index; const dept = labels[idx];
+                            if (dept) { state.currentDept = dept; $('#deptBadge').textContent = dept; renderDepartmentView(dept); }
                         }
                     }
                 }
             });
-
-            const fromStr = state.fromDate ? state.fromDate.toISOString().slice(0, 10) : '—';
-            const toStr = state.toDate ? state.toDate.toISOString().slice(0, 10) : '—';
+            const fromStr = state.fromDate ? state.fromDate.toISOString().slice(0,10) : '—';
+            const toStr = state.toDate ? state.toDate.toISOString().slice(0,10) : '—';
             $('#lbPeriod').textContent = `${fromStr} → ${toStr}`;
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER: DEPARTMENT VIEW
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── RENDER DEPARTMENT VIEW ──
         function renderDepartmentView(deptName, skipNavigation = false) {
-            if (!deptName) {
-                deptName = deptSelector.value;
-            }
-            if (!deptName) {
-                toast('Please select a department', 'error');
-                return;
-            }
-
+            if (!deptName) { deptName = $('#deptSelector').value; }
+            if (!deptName) { toast('Please select a department', 'error'); return; }
             const { empRates, deptMap, workingDays } = computeRates();
             const deptData = deptMap[deptName];
-            if (!deptData) {
-                toast('Department not found', 'error');
-                return;
-            }
-
+            if (!deptData) { toast('Department not found', 'error'); return; }
             state.currentDept = deptName;
             $('#deptBadge').textContent = deptName;
             $('#deptSubtitle').textContent = `Department: ${deptName}  •  ${deptData.empCount} employees  •  ${deptData.totalLeaves} leave records`;
-
             $('#deptAbsenceRate').textContent = deptData.rate.toFixed(1) + '%';
             $('#deptEmpCount').textContent = deptData.empCount;
             $('#deptLeaveCount').textContent = deptData.totalLeaves;
             $('#deptWorkingDays').textContent = workingDays;
-
             const empsInDept = state.employees.filter(e => e.department === deptName);
-            const sortedEmps = empsInDept
-                .map(e => ({ ...e, ...empRates[e.empNo] }))
-                .filter(e => e.rate !== undefined)
-                .sort((a, b) => b.rate - a.rate);
-
+            const sortedEmps = empsInDept.map(e => ({ ...e, ...empRates[e.empNo] })).filter(e => e.rate !== undefined).sort((a,b) => b.rate - a.rate);
             const list = $('#deptEmployeeList');
             if (sortedEmps.length === 0) {
-                list.innerHTML = `
-                            <div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
-                            <div class="empty-state" style="padding:28px 12px;"><i class="fas fa-user-slash"></i><h3>No leaves found</h3><p>No absence records for this department in the selected period</p></div>
-                        `;
+                list.innerHTML = `<div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
+                                  <div class="empty-state" style="padding:28px 12px;"><i class="fas fa-user-slash"></i><h3>No leaves found</h3><p>No absence records for this department in the selected period</p></div>`;
                 if (!skipNavigation) navigateTo('page-department');
                 return;
             }
-
             let html = `<div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>`;
             for (const emp of sortedEmps) {
                 const rate = emp.rate || 0;
-                html += `
-                            <div class="list-row" data-empno="${emp.empNo}">
-                                <span><strong>${emp.name}</strong></span>
-                                <span>${emp.empNo}</span>
-                                <span>${emp.leaveCount || 0}</span>
-                                <span class="rate">${rate.toFixed(1)}%</span>
-                            </div>
-                        `;
+                html += `<div class="list-row" data-empno="${emp.empNo}">
+                            <span><strong>${emp.name}</strong></span>
+                            <span>${emp.empNo}</span>
+                            <span>${emp.leaveCount||0}</span>
+                            <span class="rate">${rate.toFixed(1)}%</span>
+                         </div>`;
             }
             list.innerHTML = html;
             list.querySelectorAll('.list-row').forEach(row => {
                 row.addEventListener('click', () => {
-                    const empNo = row.dataset.empno;
-                    state.currentEmp = empNo;
-                    renderEmployeeView(empNo);
+                    const empNo = row.dataset.empno; state.currentEmp = empNo; renderEmployeeView(empNo);
                 });
             });
-
-            deptSelector.value = deptName;
+            $('#deptSelector').value = deptName;
             if (!skipNavigation) navigateTo('page-department');
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER: EMPLOYEE VIEW
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── RENDER EMPLOYEE VIEW ──
         function renderEmployeeView(empNo, skipNavigation = false) {
-            if (!empNo) {
-                empNo = empSearchInput.value.trim();
-            }
-            if (!empNo) {
-                toast('Please enter an Employee ID', 'error');
-                return;
-            }
-
+            if (!empNo) { empNo = $('#empSearchInput').value.trim(); }
+            if (!empNo) { toast('Please enter an Employee ID', 'error'); return; }
             const employee = state.employees.find(e => e.empNo === empNo);
             if (!employee) {
-                document.getElementById('employeeProfile').innerHTML = `
-                            <div class="empty-state" style="padding:40px 12px;">
-                                <i class="fas fa-user-slash"></i>
-                                <h3>Employee not found</h3>
-                                <p>No employee with ID "${empNo}" in the cadre</p>
-                            </div>
-                        `;
+                $('#employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-slash"></i><h3>Employee not found</h3><p>No employee with ID "${empNo}" in the cadre</p></div>`;
                 toast('Employee not found', 'error');
                 return;
             }
-
             state.currentEmp = empNo;
             const { empRates } = computeRates();
-            const empData = empRates[empNo];
-            const leaves = empData ? empData.leaves : [];
-            const rate = empData ? empData.rate : 0;
-            const leaveCount = empData ? empData.leaveCount : 0;
-
-            const profile = document.getElementById('employeeProfile');
-            const initials = employee.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-
+            const empData = empRates[empNo]; const leaves = empData ? empData.leaves : []; const rate = empData ? empData.rate : 0; const leaveCount = empData ? empData.leaveCount : 0;
+            const profile = $('#employeeProfile');
+            const initials = employee.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
             profile.innerHTML = `
-                        <div class="emp-profile">
-                            <div class="avatar">${initials}</div>
-                            <div class="info">
-                                <div class="name">${employee.name}</div>
-                                <div class="details">
-                                    <span><i class="fas fa-id-badge"></i> ${employee.empNo}</span>
-                                    <span><i class="fas fa-building"></i> ${employee.department}</span>
-                                    <span><i class="fas fa-calendar-day"></i> ${leaveCount} leave records</span>
-                                </div>
-                            </div>
-                            <div class="absence-rate-big">
-                                ${rate.toFixed(1)}%
-                                <span class="label">Absence Rate</span>
-                            </div>
+                <div class="emp-profile">
+                    <div class="avatar">${initials}</div>
+                    <div class="info">
+                        <div class="name">${employee.name}</div>
+                        <div class="details">
+                            <span><i class="fas fa-id-badge"></i> ${employee.empNo}</span>
+                            <span><i class="fas fa-building"></i> ${employee.department}</span>
+                            <span><i class="fas fa-calendar-day"></i> ${leaveCount} leave records</span>
                         </div>
-                        <div class="calendar-wrapper">
-                            <div class="cal-header">
-                                <div class="month-year" id="calMonthYear"></div>
-                                <div class="cal-nav">
-                                    <button id="calPrev"><i class="fas fa-chevron-left"></i></button>
-                                    <button id="calNext"><i class="fas fa-chevron-right"></i></button>
-                                    <button id="calToday"><i class="fas fa-calendar-day"></i></button>
-                                </div>
-                            </div>
-                            <div class="calendar-grid" id="calendarGrid"></div>
-                            <div class="calendar-legend" id="calendarLegend"></div>
+                    </div>
+                    <div class="absence-rate-big">
+                        ${rate.toFixed(1)}%
+                        <span class="label">Absence Rate</span>
+                    </div>
+                </div>
+                <div class="calendar-wrapper">
+                    <div class="cal-header">
+                        <div class="month-year" id="calMonthYear"></div>
+                        <div class="cal-nav">
+                            <button id="calPrev"><i class="fas fa-chevron-left"></i></button>
+                            <button id="calNext"><i class="fas fa-chevron-right"></i></button>
+                            <button id="calToday"><i class="fas fa-calendar-day"></i></button>
                         </div>
-                    `;
-
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div class="calendar-legend" id="calendarLegend"></div>
+                </div>`;
             let calDate = new Date(state.fromDate || new Date());
             calDate.setDate(1);
-
             function renderCalendar() {
-                const year = calDate.getFullYear();
-                const month = calDate.getMonth();
+                const year = calDate.getFullYear(); const month = calDate.getMonth();
                 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
                 $('#calMonthYear').textContent = `${monthNames[month]} ${year}`;
-
                 const firstDay = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+                const daysInMonth = new Date(year, month+1, 0).getDate();
                 const leaveMap = {};
                 for (const l of leaves) {
                     const d = new Date(l.date);
                     if (d.getFullYear() === year && d.getMonth() === month) {
-                        const key = d.getDate();
-                        if (!leaveMap[key]) leaveMap[key] = [];
-                        leaveMap[key].push(l.leaveType);
+                        const key = d.getDate(); if (!leaveMap[key]) leaveMap[key] = []; leaveMap[key].push(l.leaveType);
                     }
                 }
-
-                const grid = $('#calendarGrid');
-                let html = '';
+                const grid = $('#calendarGrid'); let html = '';
                 const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-                for (const dn of dayNames) {
-                    html += `<div class="day-name">${dn}</div>`;
-                }
-                for (let i = 0; i < firstDay; i++) {
-                    html += `<div class="day-cell empty"></div>`;
-                }
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const types = leaveMap[d] || [];
-                    const hasLeave = types.length > 0;
-                    const typeStr = types.join(', ');
-                    const colors = types.map(t => TYPE_COLORS[t] || '#999');
+                for (const dn of dayNames) html += `<div class="day-name">${dn}</div>`;
+                for (let i=0; i<firstDay; i++) html += `<div class="day-cell empty"></div>`;
+                for (let d=1; d<=daysInMonth; d++) {
+                    const types = leaveMap[d] || []; const hasLeave = types.length > 0;
+                    const typeStr = types.join(', '); const colors = types.map(t => TYPE_COLORS[t]||'#999');
                     const dotHtml = colors.map(c => `<span class="dot" style="background:${c};"></span>`).join('');
-                    const tooltip = types.length > 0 ? `<div class="tooltip">${typeStr}</div>` : '';
-                    html += `
-                                <div class="day-cell ${hasLeave ? 'has-leave' : ''}">
-                                    <span class="date-num">${d}</span>
-                                    ${hasLeave ? `<div style="display:flex;gap:3px;margin-top:2px;flex-wrap:wrap;justify-content:center;">${dotHtml}</div>` : ''}
-                                    ${tooltip}
-                                </div>
-                            `;
+                    const tooltip = types.length>0 ? `<div class="tooltip">${typeStr}</div>` : '';
+                    html += `<div class="day-cell ${hasLeave?'has-leave':''}">
+                                <span class="date-num">${d}</span>
+                                ${hasLeave ? `<div style="display:flex;gap:3px;margin-top:2px;flex-wrap:wrap;justify-content:center;">${dotHtml}</div>` : ''}
+                                ${tooltip}
+                            </div>`;
                 }
                 grid.innerHTML = html;
-
                 const usedTypes = [...new Set(leaves.map(l => l.leaveType))];
                 const legend = $('#calendarLegend');
                 if (usedTypes.length === 0) {
                     legend.innerHTML = '<span style="color:var(--textMuted);font-size:13px;"><i class="fas fa-check-circle" style="color:#4caf50;"></i> No absences recorded for this employee in the selected period</span>';
                 } else {
-                    legend.innerHTML = usedTypes.map(type =>
-                        `<span class="legend-item">
-                                    <span class="swatch" style="background:${TYPE_COLORS[type] || '#999'};"></span>
-                                    ${type}
-                                </span>`
-                    ).join('');
+                    legend.innerHTML = usedTypes.map(type => `<span class="legend-item"><span class="swatch" style="background:${TYPE_COLORS[type]||'#999'};"></span>${type}</span>`).join('');
                 }
             }
-
             renderCalendar();
-
-            document.getElementById('calPrev').addEventListener('click', () => {
-                calDate.setMonth(calDate.getMonth() - 1);
-                renderCalendar();
-            });
-            document.getElementById('calNext').addEventListener('click', () => {
-                calDate.setMonth(calDate.getMonth() + 1);
-                renderCalendar();
-            });
-            document.getElementById('calToday').addEventListener('click', () => {
-                calDate = new Date();
-                calDate.setDate(1);
-                renderCalendar();
-            });
-
-            empSearchInput.value = empNo;
+            document.getElementById('calPrev').addEventListener('click', ()=>{ calDate.setMonth(calDate.getMonth()-1); renderCalendar(); });
+            document.getElementById('calNext').addEventListener('click', ()=>{ calDate.setMonth(calDate.getMonth()+1); renderCalendar(); });
+            document.getElementById('calToday').addEventListener('click', ()=>{ calDate = new Date(); calDate.setDate(1); renderCalendar(); });
+            $('#empSearchInput').value = empNo;
             if (!skipNavigation) navigateTo('page-employee');
             toast(`Showing ${employee.name} (${empNo})`, 'success');
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER: LEADERBOARD
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── RENDER LEADERBOARD ──
         function renderLeaderboard() {
             const { empRates } = computeRates();
-            const sorted = Object.values(empRates)
-                .filter(e => e.rate > 0)
-                .sort((a, b) => b.rate - a.rate)
-                .slice(0, 10);
-
+            const sorted = Object.values(empRates).filter(e => e.rate > 0).sort((a,b)=>b.rate-a.rate).slice(0,10);
             const table = $('#leaderboardTable');
             if (sorted.length === 0) {
-                table.innerHTML = `
-                            <div class="lb-header"><span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span></div>
-                            <div class="empty-state" style="padding:40px 12px;">
-                                <i class="fas fa-chart-simple"></i>
-                                <h3>No data</h3>
-                                <p>No absence records found for the selected period &amp; categories</p>
-                            </div>
-                        `;
+                table.innerHTML = `<div class="lb-header"><span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span></div>
+                                   <div class="empty-state" style="padding:40px 12px;"><i class="fas fa-chart-simple"></i><h3>No data</h3><p>No absence records found for the selected period &amp; categories</p></div>`;
                 return;
             }
-
             let html = `<div class="lb-header"><span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span></div>`;
-            for (let i = 0; i < sorted.length; i++) {
-                const emp = sorted[i];
-                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-                html += `
-                            <div class="lb-row" data-empno="${emp.empNo}">
-                                <span class="rank">${medal}</span>
-                                <span><strong>${emp.name}</strong></span>
-                                <span>${emp.department}</span>
-                                <span>${emp.empNo}</span>
-                                <span class="rate">${emp.rate.toFixed(1)}%</span>
-                            </div>
-                        `;
+            for (let i=0; i<sorted.length; i++) {
+                const emp = sorted[i]; const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+                html += `<div class="lb-row" data-empno="${emp.empNo}">
+                            <span class="rank">${medal}</span>
+                            <span><strong>${emp.name}</strong></span>
+                            <span>${emp.department}</span>
+                            <span>${emp.empNo}</span>
+                            <span class="rate">${emp.rate.toFixed(1)}%</span>
+                         </div>`;
             }
             table.innerHTML = html;
             table.querySelectorAll('.lb-row').forEach(row => {
-                row.addEventListener('click', () => {
-                    const empNo = row.dataset.empno;
-                    state.currentEmp = empNo;
-                    renderEmployeeView(empNo);
-                });
+                row.addEventListener('click', ()=>{ const empNo = row.dataset.empno; state.currentEmp = empNo; renderEmployeeView(empNo); });
             });
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  POPULATE DEPT SELECTOR
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── POPULATE DEPT SELECTOR ──
         function populateDeptSelector() {
-            const depts = [...new Set(state.employees.map(e => e.department))].filter(Boolean).sort();
-            const sel = deptSelector;
-            sel.innerHTML = '<option value="">— Choose department —</option>';
-            for (const d of depts) {
-                sel.innerHTML += `<option value="${d}">${d}</option>`;
+            const depts = [...new Set(state.employees.map(e=>e.department))].filter(Boolean).sort();
+            const sel = $('#deptSelector'); sel.innerHTML = '<option value="">— Choose department —</option>';
+            for (const d of depts) sel.innerHTML += `<option value="${d}">${d}</option>`;
+        }
+
+        // ── CATEGORY CHIPS ──
+        function renderCategoryChips() {
+            const targets = [$('#categoryFiltersCompany'), $('#categoryFiltersDept'), $('#categoryFiltersLB')];
+            const html = LEAVE_TYPES.map(type => {
+                const active = state.activeCategories.includes(type) ? 'active' : '';
+                const color = TYPE_COLORS[type]||'#999';
+                return `<span class="category-chip ${active}" data-type="${type}" style="border-color:${active ? color : 'var(--border)'};">
+                            <span class="dot" style="background:${color};"></span> ${type}</span>`;
+            }).join('');
+            for (const el of targets) if (el) {
+                el.innerHTML = html;
+                el.querySelectorAll('.category-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const type = chip.dataset.type;
+                        const idx = state.activeCategories.indexOf(type);
+                        if (idx>-1) state.activeCategories.splice(idx,1); else state.activeCategories.push(type);
+                        renderCategoryChips(); applyFilters(true);
+                    });
+                });
             }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  APPLY FILTERS → RENDER ALL
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── APPLY FILTERS ──
         function applyFilters(skipNavigation = false) {
             if (state.employees.length === 0) return;
             renderCompanyChart();
             renderLeaderboard();
-
             if (state.currentDept) {
                 const stillExists = state.employees.some(e => e.department === state.currentDept);
-                if (stillExists) {
-                    renderDepartmentView(state.currentDept, skipNavigation);
-                } else {
-                    state.currentDept = null;
-                    $('#deptBadge').textContent = '—';
-                }
+                if (stillExists) renderDepartmentView(state.currentDept, skipNavigation);
+                else { state.currentDept = null; $('#deptBadge').textContent = '—'; }
             }
-
             if (state.currentEmp) {
                 const stillExists = state.employees.some(e => e.empNo === state.currentEmp);
-                if (stillExists) {
-                    renderEmployeeView(state.currentEmp, skipNavigation);
-                } else {
-                    state.currentEmp = null;
-                }
+                if (stillExists) renderEmployeeView(state.currentEmp, skipNavigation);
+                else state.currentEmp = null;
             }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  NAVIGATION
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── NAVIGATION ──
         function navigateTo(pageId) {
             $$('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(pageId);
             if (target) target.classList.add('active');
-
             $$('.nav-item').forEach(n => n.classList.remove('active'));
             const navBtn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
             if (navBtn) navBtn.classList.add('active');
-
-            // If navigating to supervisor page, check login status
-            if (pageId === 'page-supervisor') {
-                checkSupervisorLogin();
-            }
         }
 
         $$('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const page = btn.dataset.page;
                 navigateTo(page);
-
-                if (page === 'page-department' && state.currentDept) {
-                    renderDepartmentView(state.currentDept);
-                } else if (page === 'page-department') {
-                    const list = $('#deptEmployeeList');
-                    list.innerHTML = `
-                                <div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
-                                <div class="empty-state" style="padding:32px 12px;">
-                                    <i class="fas fa-building"></i>
-                                    <h3>Select a department</h3>
-                                    <p>Use the dropdown above or click a bar on the Company chart</p>
-                                </div>
-                            `;
-                    $('#deptAbsenceRate').textContent = '—';
-                    $('#deptEmpCount').textContent = '—';
-                    $('#deptLeaveCount').textContent = '—';
-                    $('#deptWorkingDays').textContent = '—';
-                    $('#deptSubtitle').textContent = 'Select a department from the company chart or use the dropdown';
+                if (page === 'page-department' && state.currentDept) renderDepartmentView(state.currentDept);
+                else if (page === 'page-department') {
+                    $('#deptEmployeeList').innerHTML = `<div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
+                        <div class="empty-state" style="padding:32px 12px;"><i class="fas fa-building"></i><h3>Select a department</h3><p>Use the dropdown or click a company chart bar</p></div>`;
+                    $('#deptAbsenceRate,#deptEmpCount,#deptLeaveCount,#deptWorkingDays').text('—');
+                    $('#deptSubtitle').text('Select a department from the company chart or use the dropdown');
                 }
-
-                if (page === 'page-employee' && state.currentEmp) {
-                    renderEmployeeView(state.currentEmp);
-                } else if (page === 'page-employee') {
-                    document.getElementById('employeeProfile').innerHTML = `
-                                <div class="empty-state" style="padding:40px 12px;">
-                                    <i class="fas fa-user-circle"></i>
-                                    <h3>Search for an employee</h3>
-                                    <p>Enter an employee ID above or click a name from the department list</p>
-                                </div>
-                            `;
+                if (page === 'page-employee' && state.currentEmp) renderEmployeeView(state.currentEmp);
+                else if (page === 'page-employee') {
+                    $('#employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an employee ID above or click a name from the department list</p></div>`;
                 }
-
-                if (page === 'page-leaderboard') {
-                    renderLeaderboard();
-                }
-
-                if (page === 'page-company') {
-                    renderCompanyChart();
-                }
+                if (page === 'page-leaderboard') renderLeaderboard();
+                if (page === 'page-company') renderCompanyChart();
             });
         });
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  DEPARTMENT SELECTOR → GO
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        btnGoDept.addEventListener('click', () => {
-            const dept = deptSelector.value;
-            if (dept) {
-                state.currentDept = dept;
-                renderDepartmentView(dept);
-            } else {
-                toast('Please select a department', 'error');
-            }
+        // ── EVENT LISTENERS ──
+        $('#btnApplyDate').addEventListener('click', () => {
+            const from = new Date($('#fromDate').value); const to = new Date($('#toDate').value);
+            if (isNaN(from.getTime())||isNaN(to.getTime())) { toast('Please select valid dates','error'); return; }
+            if (from > to) { toast('From date must be before To date','error'); return; }
+            state.fromDate = from; state.toDate = to; applyFilters(true); toast('Date range updated','success');
         });
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  EMPLOYEE SEARCH → GO
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        btnSearchEmp.addEventListener('click', () => {
-            const val = empSearchInput.value.trim();
-            if (val) {
-                renderEmployeeView(val);
-            } else {
-                toast('Please enter an Employee ID', 'error');
-            }
+        $('#btnGoDept').addEventListener('click', () => {
+            const dept = $('#deptSelector').value;
+            if (dept) { state.currentDept = dept; renderDepartmentView(dept); }
+            else toast('Please select a department','error');
         });
-
-        empSearchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') btnSearchEmp.click();
+        $('#btnSearchEmp').addEventListener('click', () => {
+            const val = $('#empSearchInput').value.trim();
+            if (val) renderEmployeeView(val); else toast('Please enter an Employee ID','error');
         });
+        $('#empSearchInput').addEventListener('keydown', e => { if (e.key==='Enter') $('#btnSearchEmp').click(); });
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  DATA LOADING: localStorage first, then fallback URL
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── LOAD EXCEL FROM DRIVE (using SheetJS & fetch) ──
         async function loadExcelFromUrl(url) {
             const response = await fetch(url);
-            if (!response.ok) throw new Error(`File not found: ${url}`);
+            if (!response.ok) throw new Error(`Could not fetch ${url}`);
             const buffer = await response.arrayBuffer();
             const workbook = XLSX.read(buffer, { type: 'array' });
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             return XLSX.utils.sheet_to_json(sheet);
         }
 
-        function loadDataFromLocalStorageOrFallback() {
-            // Try localStorage first
-            const storedLeave = localStorage.getItem(LS_LEAVE_KEY);
-            const storedCadre = localStorage.getItem(LS_CADRE_KEY);
-
-            if (storedLeave && storedCadre) {
-                try {
-                    const leaveData = JSON.parse(storedLeave);
-                    const cadreData = JSON.parse(storedCadre);
-                    toast('Using supervisor-uploaded data.', 'info');
-                    processData(leaveData, cadreData);
-                    return;
-                } catch (e) {
-                    console.warn('localStorage data corrupted, falling back to server files');
-                }
-            }
-
-            // Fallback: load from server URLs
-            autoLoadFromUrls();
-        }
-
-        async function autoLoadFromUrls() {
+        async function loadDataFromDrive() {
             try {
                 const [leaveData, cadreData] = await Promise.all([
                     loadExcelFromUrl(LEAVE_FILE_URL),
-                    loadExcelFromUrl(CADRE_FILE_URL),
+                    loadExcelFromUrl(CADRE_FILE_URL)
                 ]);
-
-                toast('Loaded pre‑stored files from server.', 'success');
                 processData(leaveData, cadreData);
-            } catch (error) {
-                console.error('Auto‑load failed:', error);
-                toast('No data found. Please ask the supervisor to upload files.', 'error');
+            } catch (err) {
+                console.error(err);
+                toast('Failed to load files from Drive. Check sharing settings and file IDs.', 'error');
             }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER ALL (initial / after clear)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function renderAll() {
-            if (state.employees.length === 0) {
-                if (state.companyChart) {
-                    state.companyChart.destroy();
-                    state.companyChart = null;
-                }
-                document.getElementById('employeeProfile').innerHTML = `
-                            <div class="empty-state" style="padding:40px 12px;">
-                                <i class="fas fa-user-circle"></i>
-                                <h3>No data loaded</h3>
-                                <p>Please ask the supervisor to upload data.</p>
-                            </div>
-                        `;
-                const list = $('#deptEmployeeList');
-                list.innerHTML = `
-                            <div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
-                            <div class="empty-state" style="padding:32px 12px;">
-                                <i class="fas fa-inbox"></i>
-                                <h3>No data</h3>
-                                <p>Supervisor upload required</p>
-                            </div>
-                        `;
-                $('#deptAbsenceRate').textContent = '—';
-                $('#deptEmpCount').textContent = '—';
-                $('#deptLeaveCount').textContent = '—';
-                $('#deptWorkingDays').textContent = '—';
-                $('#deptSubtitle').textContent = 'Select a department from the company chart or use the dropdown';
-                $('#lbPeriod').textContent = '—';
-                $('#deptBadge').textContent = '—';
-                return;
-            }
-            applyFilters(true);
-        }
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  INIT
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ── INIT ──
         (function init() {
-            const now = new Date();
-            const monthAgo = new Date(now);
-            monthAgo.setMonth(monthAgo.getMonth() - 1);
-            fromDate.value = monthAgo.toISOString().slice(0, 10);
-            toDate.value = now.toISOString().slice(0, 10);
-            state.fromDate = monthAgo;
-            state.toDate = now;
-
+            const now = new Date(); const monthAgo = new Date(now);
+            monthAgo.setMonth(monthAgo.getMonth()-1);
+            $('#fromDate').value = monthAgo.toISOString().slice(0,10);
+            $('#toDate').value = now.toISOString().slice(0,10);
+            state.fromDate = monthAgo; state.toDate = now;
             renderCategoryChips();
-            loadDataFromLocalStorageOrFallback();
+            loadDataFromDrive();
         })();
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                empSearchInput.value = '';
-                empSearchInput.blur();
-            }
-        });
     </script>
 </body>
 </html>
