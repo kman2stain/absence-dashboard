@@ -520,6 +520,30 @@
         .leaderboard-table .lb-row .rank { font-weight: 700; font-size: 16px; color: var(--accent); }
         .leaderboard-table .lb-row .rate { font-weight: 600; color: var(--accent); }
 
+        /* ── Supervisor login specific ── */
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: var(--surface);
+            padding: 40px 32px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 20px 0 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+        .login-container input[type="password"]:focus { border-color: var(--accent); }
+        .login-container .btn { width: 100%; justify-content: center; }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -612,6 +636,11 @@
             <span>Leaderboard</span>
             <span class="badge">Top 10</span>
         </button>
+        <!-- NEW: Supervisor page -->
+        <button class="nav-item" data-page="page-supervisor">
+            <i class="fas fa-shield-alt"></i>
+            <span>Supervisor</span>
+        </button>
         <div class="sidebar-footer">
             <i class="fas fa-database" style="margin-right:6px;"></i> v1.0
         </div>
@@ -620,7 +649,7 @@
     <!-- ─── MAIN ─── -->
     <main class="main" id="mainContent">
 
-        <!-- ── UPLOAD ZONE ── -->
+        <!-- ── UPLOAD ZONE (only visible on Company/Department pages) ── -->
         <div class="upload-zone" id="uploadZone">
             <div class="upload-box" id="uploadLeave">
                 <i class="fas fa-file-excel"></i>
@@ -693,7 +722,6 @@
                 <div class="stat"><div class="number" id="deptAbsenceRate">—</div><div class="label">Absence Rate</div></div>
                 <div class="stat"><div class="number" id="deptEmpCount">—</div><div class="label">Employees</div></div>
                 <div class="stat"><div class="number" id="deptLeaveCount">—</div><div class="label">Leave Records</div></div>
-                <!-- CHANGED: "Highest Employee Rate" replaced with "Working Days" -->
                 <div class="stat"><div class="number" id="deptWorkingDays">—</div><div class="label">Working Days</div></div>
             </div>
 
@@ -768,6 +796,58 @@
             </div>
         </section>
 
+        <!-- ─── PAGE: SUPERVISOR (NEW) ─── -->
+        <section class="page" id="page-supervisor">
+            <div class="page-header">
+                <div>
+                    <h2><i class="fas fa-shield-alt" style="color:var(--accent);margin-right:10px;"></i>Supervisor Panel</h2>
+                    <div class="subtitle" id="supervisorStatus">Login to upload new absence data</div>
+                </div>
+            </div>
+            <div id="supervisorContent">
+                <!-- Login form (visible when not logged in) -->
+                <div class="login-container" id="loginForm">
+                    <i class="fas fa-lock" style="font-size:40px;color:var(--textMuted);margin-bottom:12px;"></i>
+                    <h3>Supervisor Login</h3>
+                    <p style="color:var(--textMuted);font-size:14px;margin:8px 0 0;">Enter password to access upload</p>
+                    <input type="password" id="supervisorPassword" placeholder="Password" />
+                    <button class="btn btn-primary" id="btnLogin">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <p style="color:var(--textMuted);font-size:12px;margin-top:12px;">Default: admin123</p>
+                </div>
+
+                <!-- Upload section (visible after login) -->
+                <div id="uploadSection" style="display:none;">
+                    <div class="upload-zone" style="margin-bottom:24px;">
+                        <div class="upload-box" id="supUploadLeave">
+                            <i class="fas fa-file-excel"></i>
+                            <div class="label">📄 All Leave File</div>
+                            <div class="sub">.xlsx — leave records</div>
+                            <input type="file" accept=".xlsx,.xls" id="supFileLeave" />
+                            <div class="upload-status" id="supStatusLeave">No file selected</div>
+                        </div>
+                        <div class="upload-box" id="supUploadCadre">
+                            <i class="fas fa-file-excel"></i>
+                            <div class="label">📋 Full Cadre Details</div>
+                            <div class="sub">.xlsx — employee master</div>
+                            <input type="file" accept=".xlsx,.xls" id="supFileCadre" />
+                            <div class="upload-status" id="supStatusCadre">No file selected</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="btnSupProcess" style="width:200px;">
+                        <i class="fas fa-upload"></i> Upload & Process
+                    </button>
+                    <button class="btn btn-danger" id="btnSupLogout" style="margin-left:12px;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <p style="color:var(--textMuted);font-size:13px;margin-top:16px;">
+                        <i class="fas fa-info-circle"></i> Uploading will replace the current dashboard data for all users on this browser.
+                    </p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- ─── TOAST ─── -->
@@ -775,10 +855,11 @@
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIG – PATHS TO PRE‑STORED EXCEL FILES
+        //  CONFIG – PATHS TO PRE‑STORED EXCEL FILES (fallback)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const LEAVE_FILE_URL = 'data/all_leave.xlsx';      // ← Change to your file path/name
         const CADRE_FILE_URL = 'data/cadre_details.xlsx';  // ← Change to your file path/name
+        const SUPERVISOR_PASSWORD = 'admin123';            // ← Change the password here
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  LEAVE TYPES & COLORS
@@ -832,6 +913,26 @@
         const btnGoDept = $('#btnGoDept');
         const empSearchInput = $('#empSearchInput');
         const btnSearchEmp = $('#btnSearchEmp');
+
+        // Supervisor elements
+        const supFileLeave = $('#supFileLeave');
+        const supFileCadre = $('#supFileCadre');
+        const supStatusLeave = $('#supStatusLeave');
+        const supStatusCadre = $('#supStatusCadre');
+        const btnSupProcess = $('#btnSupProcess');
+        const btnSupLogout = $('#btnSupLogout');
+        const loginForm = $('#loginForm');
+        const uploadSection = $('#uploadSection');
+        const supervisorPassword = $('#supervisorPassword');
+        const btnLogin = $('#btnLogin');
+        const supervisorStatus = $('#supervisorStatus');
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  LOCAL STORAGE KEYS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const LS_LEAVE_KEY = 'absence_dashboard_leave_data';
+        const LS_CADRE_KEY = 'absence_dashboard_cadre_data';
+        const LS_SUPERVISOR_LOGGED = 'absence_supervisor_logged_in';
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  TOAST
@@ -893,6 +994,115 @@
             };
             reader.readAsArrayBuffer(f);
         });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  SUPERVISOR UPLOAD
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        let supLeaveData = null;
+        let supCadreData = null;
+
+        $('#supUploadLeave').addEventListener('click', () => supFileLeave.click());
+        $('#supUploadCadre').addEventListener('click', () => supFileCadre.click());
+
+        supFileLeave.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: 'array' });
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    supLeaveData = XLSX.utils.sheet_to_json(sheet);
+                    supStatusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${supLeaveData.length} rows)</span>`;
+                    $('#supUploadLeave').classList.add('uploaded');
+                } catch (err) {
+                    supStatusLeave.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
+                }
+            };
+            reader.readAsArrayBuffer(f);
+        });
+
+        supFileCadre.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: 'array' });
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    supCadreData = XLSX.utils.sheet_to_json(sheet);
+                    supStatusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${supCadreData.length} rows)</span>`;
+                    $('#supUploadCadre').classList.add('uploaded');
+                } catch (err) {
+                    supStatusCadre.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
+                }
+            };
+            reader.readAsArrayBuffer(f);
+        });
+
+        btnSupProcess.addEventListener('click', () => {
+            if (!supLeaveData || !supCadreData) {
+                toast('Please select both Excel files first.', 'error');
+                return;
+            }
+            // Save to localStorage
+            localStorage.setItem(LS_LEAVE_KEY, JSON.stringify(supLeaveData));
+            localStorage.setItem(LS_CADRE_KEY, JSON.stringify(supCadreData));
+            toast('Data uploaded! The dashboard will now use the new files.', 'success');
+            // Reload the main dashboard data
+            loadDataFromLocalStorageOrFallback();
+        });
+
+        btnSupLogout.addEventListener('click', () => {
+            localStorage.removeItem(LS_SUPERVISOR_LOGGED);
+            supLeaveData = null;
+            supCadreData = null;
+            supStatusLeave.innerHTML = 'No file selected';
+            supStatusCadre.innerHTML = 'No file selected';
+            $('#supUploadLeave').classList.remove('uploaded');
+            $('#supUploadCadre').classList.remove('uploaded');
+            supFileLeave.value = '';
+            supFileCadre.value = '';
+            loginForm.style.display = 'block';
+            uploadSection.style.display = 'none';
+            supervisorStatus.textContent = 'Login to upload new absence data';
+            toast('Logged out from supervisor panel', 'info');
+        });
+
+        // Supervisor login
+        function checkSupervisorLogin() {
+            if (localStorage.getItem(LS_SUPERVISOR_LOGGED) === 'true') {
+                showUploadSection();
+            } else {
+                loginForm.style.display = 'block';
+                uploadSection.style.display = 'none';
+                supervisorStatus.textContent = 'Login to upload new absence data';
+            }
+        }
+
+        function showUploadSection() {
+            loginForm.style.display = 'none';
+            uploadSection.style.display = 'block';
+            supervisorStatus.textContent = 'Upload new Excel files to update the dashboard';
+            supervisorPassword.value = '';
+        }
+
+        btnLogin.addEventListener('click', () => {
+            if (supervisorPassword.value === SUPERVISOR_PASSWORD) {
+                localStorage.setItem(LS_SUPERVISOR_LOGGED, 'true');
+                showUploadSection();
+                toast('Logged in as supervisor', 'success');
+            } else {
+                toast('Incorrect password', 'error');
+            }
+        });
+
+        supervisorPassword.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') btnLogin.click();
+        });
+
+        // Initialize supervisor page visibility
+        $('#page-supervisor').addEventListener('transitionend', checkSupervisorLogin); // not needed, we call on navigation
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  DATE PARSER (supports DD.MM.YYYY, Excel serial, etc.)
@@ -1046,7 +1256,7 @@
                 $('#deptCount').textContent = [...new Set(employees.map(e => e.department))].length;
                 populateDeptSelector();
                 renderCategoryChips();
-                applyFilters(true); // skip navigation when processing data
+                applyFilters(true);
                 toast(`Processed ${employees.length} employees, ${leaves.length} leave records`, 'success');
             } catch (err) {
                 console.error(err);
@@ -1289,7 +1499,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER: DEPARTMENT VIEW (modified: working days stat)
+        //  RENDER: DEPARTMENT VIEW
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function renderDepartmentView(deptName, skipNavigation = false) {
             if (!deptName) {
@@ -1300,7 +1510,7 @@
                 return;
             }
 
-            const { empRates, deptMap, workingDays, filtered } = computeRates();
+            const { empRates, deptMap, workingDays } = computeRates();
             const deptData = deptMap[deptName];
             if (!deptData) {
                 toast('Department not found', 'error');
@@ -1314,8 +1524,6 @@
             $('#deptAbsenceRate').textContent = deptData.rate.toFixed(1) + '%';
             $('#deptEmpCount').textContent = deptData.empCount;
             $('#deptLeaveCount').textContent = deptData.totalLeaves;
-
-            // ── Working Days stat (replaces "Highest Employee Rate") ──
             $('#deptWorkingDays').textContent = workingDays;
 
             const empsInDept = state.employees.filter(e => e.department === deptName);
@@ -1385,7 +1593,7 @@
             }
 
             state.currentEmp = empNo;
-            const { empRates, workingDays, filtered } = computeRates();
+            const { empRates } = computeRates();
             const empData = empRates[empNo];
             const leaves = empData ? empData.leaves : [];
             const rate = empData ? empData.rate : 0;
@@ -1567,7 +1775,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  APPLY FILTERS → RENDER ALL (with optional skip navigation)
+        //  APPLY FILTERS → RENDER ALL
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function applyFilters(skipNavigation = false) {
             if (state.employees.length === 0) return;
@@ -1605,6 +1813,18 @@
             $$('.nav-item').forEach(n => n.classList.remove('active'));
             const navBtn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
             if (navBtn) navBtn.classList.add('active');
+
+            // Show/hide the main upload zone (only on Company/Department pages)
+            if (pageId === 'page-company' || pageId === 'page-department') {
+                $('#uploadZone').style.display = 'flex';
+            } else {
+                $('#uploadZone').style.display = 'none';
+            }
+
+            // If navigating to supervisor page, check login status
+            if (pageId === 'page-supervisor') {
+                checkSupervisorLogin();
+            }
         }
 
         $$('.nav-item').forEach(btn => {
@@ -1627,7 +1847,7 @@
                     $('#deptAbsenceRate').textContent = '—';
                     $('#deptEmpCount').textContent = '—';
                     $('#deptLeaveCount').textContent = '—';
-                    $('#deptWorkingDays').textContent = '—';   // reset working days
+                    $('#deptWorkingDays').textContent = '—';
                     $('#deptSubtitle').textContent = 'Select a department from the company chart or use the dropdown';
                 }
 
@@ -1683,7 +1903,7 @@
         });
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  AUTO‑LOAD EXCEL FROM PRE‑STORED URLS
+        //  DATA LOADING: localStorage first, then fallback URL
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function loadExcelFromUrl(url) {
             const response = await fetch(url);
@@ -1694,7 +1914,31 @@
             return XLSX.utils.sheet_to_json(sheet);
         }
 
-        async function autoLoadFiles() {
+        function loadDataFromLocalStorageOrFallback() {
+            // Try localStorage first
+            const storedLeave = localStorage.getItem(LS_LEAVE_KEY);
+            const storedCadre = localStorage.getItem(LS_CADRE_KEY);
+
+            if (storedLeave && storedCadre) {
+                try {
+                    leaveFileData = JSON.parse(storedLeave);
+                    cadreFileData = JSON.parse(storedCadre);
+                    statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from supervisor upload (${leaveFileData.length} rows)</span>`;
+                    statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from supervisor upload (${cadreFileData.length} rows)</span>`;
+                    $('#uploadLeave').classList.add('uploaded');
+                    $('#uploadCadre').classList.add('uploaded');
+                    processData();
+                    return;
+                } catch (e) {
+                    console.warn('localStorage data corrupted, falling back to server files');
+                }
+            }
+
+            // Fallback: load from server URLs
+            autoLoadFromUrls();
+        }
+
+        async function autoLoadFromUrls() {
             try {
                 const [leaveData, cadreData] = await Promise.all([
                     loadExcelFromUrl(LEAVE_FILE_URL),
@@ -1704,8 +1948,8 @@
                 leaveFileData = leaveData;
                 cadreFileData = cadreData;
 
-                statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded (${leaveData.length} rows)</span>`;
-                statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded (${cadreData.length} rows)</span>`;
+                statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from server (${leaveData.length} rows)</span>`;
+                statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from server (${cadreData.length} rows)</span>`;
                 $('#uploadLeave').classList.add('uploaded');
                 $('#uploadCadre').classList.add('uploaded');
 
@@ -1744,7 +1988,7 @@
                 $('#deptAbsenceRate').textContent = '—';
                 $('#deptEmpCount').textContent = '—';
                 $('#deptLeaveCount').textContent = '—';
-                $('#deptWorkingDays').textContent = '—';   // reset working days
+                $('#deptWorkingDays').textContent = '—';
                 $('#deptSubtitle').textContent = 'Select a department from the company chart or use the dropdown';
                 $('#lbPeriod').textContent = '—';
                 $('#deptBadge').textContent = '—';
@@ -1766,8 +2010,7 @@
             state.toDate = now;
 
             renderCategoryChips();
-            // Instead of renderAll(), we try to auto‑load the pre‑stored files
-            autoLoadFiles();
+            loadDataFromLocalStorageOrFallback();
         })();
 
         document.addEventListener('keydown', (e) => {
