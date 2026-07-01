@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Absence Dashboard — Warehouse</title>
 
+    <!-- Chart.js & SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <style>
@@ -37,31 +40,6 @@
         ::-webkit-scrollbar-track { background: var(--surface); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-        /* ── LOADING OVERLAY ── */
-        .loading-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(15,17,23,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            flex-direction: column;
-            color: var(--text);
-            font-size: 18px;
-            gap: 16px;
-        }
-        .loading-spinner {
-            border: 4px solid var(--border);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         .sidebar {
             width: 220px;
@@ -144,6 +122,44 @@
             min-width: 0;
             overflow-y: auto;
             max-height: 100vh;
+        }
+
+        .upload-zone {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            background: var(--surface);
+            padding: 24px 28px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .upload-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 20px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: border var(--transition), background var(--transition);
+            background: var(--bg);
+        }
+        .upload-box:hover { border-color: var(--accent); background: var(--surface2); }
+        .upload-box.uploaded { border-color: #4caf50; background: rgba(76,175,80,0.08); }
+        .upload-box i { font-size: 28px; color: var(--textMuted); margin-bottom: 6px; display: block; }
+        .upload-box .label { font-weight: 600; font-size: 14px; }
+        .upload-box .sub { font-size: 12px; color: var(--textMuted); margin-top: 4px; }
+        .upload-box input[type="file"] { display: none; }
+        .upload-status { font-size: 13px; margin-top: 8px; color: var(--textMuted); }
+        .upload-status .ok { color: #4caf50; }
+        .upload-status .err { color: #f44336; }
+
+        .upload-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -504,6 +520,30 @@
         .leaderboard-table .lb-row .rank { font-weight: 700; font-size: 16px; color: var(--accent); }
         .leaderboard-table .lb-row .rate { font-weight: 600; color: var(--accent); }
 
+        /* ── Supervisor login specific ── */
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: var(--surface);
+            padding: 40px 32px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 20px 0 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+        .login-container input[type="password"]:focus { border-color: var(--accent); }
+        .login-container .btn { width: 100%; justify-content: center; }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -521,6 +561,7 @@
             .nav-item .badge { display: none; }
             .sidebar-footer { display: none; }
             .main { padding: 20px 16px; }
+            .upload-zone { flex-direction: column; padding: 16px; }
             .employee-list .list-header, .employee-list .list-row,
             .leaderboard-table .lb-header, .leaderboard-table .lb-row {
                 grid-template-columns: 1fr 1fr;
@@ -570,37 +611,71 @@
 </head>
 <body>
 
-    <!-- LOADING OVERLAY (hidden once data is loaded) -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <span>Loading dashboard data…</span>
-    </div>
-
+    <!-- ─── SIDEBAR ─── -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <i class="fas fa-warehouse"></i>
             <span class="brand-text">Absence</span>
         </div>
         <button class="nav-item active" data-page="page-company">
-            <i class="fas fa-building"></i><span>Company</span><span class="badge" id="deptCount">0</span>
+            <i class="fas fa-building"></i>
+            <span>Company</span>
+            <span class="badge" id="deptCount">0</span>
         </button>
         <button class="nav-item" data-page="page-department">
-            <i class="fas fa-users"></i><span>Department</span><span class="badge" id="deptBadge">—</span>
+            <i class="fas fa-users"></i>
+            <span>Department</span>
+            <span class="badge" id="deptBadge">—</span>
         </button>
         <button class="nav-item" data-page="page-employee">
-            <i class="fas fa-user"></i><span>Employee</span>
+            <i class="fas fa-user"></i>
+            <span>Employee</span>
         </button>
         <button class="nav-item" data-page="page-leaderboard">
-            <i class="fas fa-trophy"></i><span>Leaderboard</span><span class="badge">Top 10</span>
+            <i class="fas fa-trophy"></i>
+            <span>Leaderboard</span>
+            <span class="badge">Top 10</span>
+        </button>
+        <!-- Supervisor page -->
+        <button class="nav-item" data-page="page-supervisor">
+            <i class="fas fa-shield-alt"></i>
+            <span>Supervisor</span>
         </button>
         <div class="sidebar-footer">
             <i class="fas fa-database" style="margin-right:6px;"></i> v1.0
         </div>
     </aside>
 
+    <!-- ─── MAIN ─── -->
     <main class="main" id="mainContent">
 
-        <!-- COMPANY PAGE -->
+        <!-- ── UPLOAD ZONE (only visible on Company/Department pages) ── -->
+        <div class="upload-zone" id="uploadZone">
+            <div class="upload-box" id="uploadLeave">
+                <i class="fas fa-file-excel"></i>
+                <div class="label">📄 All Leave File</div>
+                <div class="sub">.xlsx — leave records</div>
+                <input type="file" accept=".xlsx,.xls" id="fileLeave" />
+                <div class="upload-status" id="statusLeave">No file uploaded</div>
+            </div>
+            <div class="upload-box" id="uploadCadre">
+                <i class="fas fa-file-excel"></i>
+                <div class="label">📋 Full Cadre Details</div>
+                <div class="sub">.xlsx — employee master</div>
+                <input type="file" accept=".xlsx,.xls" id="fileCadre" />
+                <div class="upload-status" id="statusCadre">No file uploaded</div>
+            </div>
+            <div class="upload-actions">
+                <button class="btn btn-primary" id="btnProcess">
+                    <i class="fas fa-play"></i> Process Data
+                </button>
+                <button class="btn btn-danger" id="btnClear">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: COMPANY ─── -->
         <section class="page active" id="page-company">
             <div class="page-header">
                 <div>
@@ -615,7 +690,9 @@
                     <button class="btn btn-primary" id="btnApplyDate"><i class="fas fa-sync"></i> Apply</button>
                 </div>
             </div>
+
             <div class="category-filters" id="categoryFiltersCompany"></div>
+
             <div class="chart-wrapper">
                 <canvas id="companyChart"></canvas>
             </div>
@@ -624,7 +701,7 @@
             </div>
         </section>
 
-        <!-- DEPARTMENT PAGE -->
+        <!-- ─── PAGE: DEPARTMENT ─── -->
         <section class="page" id="page-department">
             <div class="page-header">
                 <div>
@@ -638,27 +715,35 @@
                     <button class="btn btn-primary" id="btnGoDept"><i class="fas fa-arrow-right"></i> View</button>
                 </div>
             </div>
+
             <div class="category-filters" id="categoryFiltersDept"></div>
+
             <div class="dept-summary" id="deptSummary">
                 <div class="stat"><div class="number" id="deptAbsenceRate">—</div><div class="label">Absence Rate</div></div>
                 <div class="stat"><div class="number" id="deptEmpCount">—</div><div class="label">Employees</div></div>
                 <div class="stat"><div class="number" id="deptLeaveCount">—</div><div class="label">Leave Records</div></div>
                 <div class="stat"><div class="number" id="deptWorkingDays">—</div><div class="label">Working Days</div></div>
             </div>
+
             <h4 style="margin-bottom:12px;font-weight:500;color:var(--textMuted);">
                 <i class="fas fa-list-ol"></i> All Employees — sorted by absence rate (highest first)
             </h4>
             <div class="employee-list" id="deptEmployeeList">
                 <div class="list-header">
-                    <span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span>
+                    <span>Employee</span>
+                    <span>Emp No.</span>
+                    <span>Leave Days</span>
+                    <span>Absence Rate</span>
                 </div>
                 <div class="empty-state" style="padding:32px 12px;">
-                    <i class="fas fa-inbox"></i><h3>No data</h3><p>Select a department to see employees</p>
+                    <i class="fas fa-inbox"></i>
+                    <h3>No data</h3>
+                    <p>Select a department to see employees</p>
                 </div>
             </div>
         </section>
 
-        <!-- EMPLOYEE PAGE -->
+        <!-- ─── PAGE: EMPLOYEE ─── -->
         <section class="page" id="page-employee">
             <div class="page-header">
                 <div>
@@ -666,18 +751,21 @@
                     <div class="subtitle">Search by employee ID or select from department list</div>
                 </div>
                 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-                    <input type="text" id="empSearchInput" placeholder="Enter Emp. No. (e.g. 1001)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:40px;font-size:14px;outline:none;width:200px;" />
+                    <input type="text" id="empSearchInput" placeholder="Enter Emp. No. (e.g. 1001)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:40px;font-size:14px;outline:none;width:200px;transition:border var(--transition);" />
                     <button class="btn btn-primary" id="btnSearchEmp"><i class="fas fa-search"></i> Search</button>
                 </div>
             </div>
+
             <div id="employeeProfile">
                 <div class="empty-state" style="padding:40px 12px;">
-                    <i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an employee ID above or click a name from the department list</p>
+                    <i class="fas fa-user-circle"></i>
+                    <h3>Search for an employee</h3>
+                    <p>Enter an employee ID above or click a name from the department list</p>
                 </div>
             </div>
         </section>
 
-        <!-- LEADERBOARD PAGE -->
+        <!-- ─── PAGE: LEADERBOARD ─── -->
         <section class="page" id="page-leaderboard">
             <div class="page-header">
                 <div>
@@ -689,28 +777,93 @@
                     <span id="lbPeriod" style="font-weight:500;">—</span>
                 </div>
             </div>
+
             <div class="category-filters" id="categoryFiltersLB"></div>
+
             <div class="leaderboard-table" id="leaderboardTable">
                 <div class="lb-header">
-                    <span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span>
+                    <span>#</span>
+                    <span>Employee</span>
+                    <span>Department</span>
+                    <span>Emp No.</span>
+                    <span>Absence Rate</span>
                 </div>
                 <div class="empty-state" style="padding:40px 12px;">
-                    <i class="fas fa-chart-simple"></i><h3>No data</h3><p>Ask the supervisor to update the Excel files in Drive</p>
+                    <i class="fas fa-chart-simple"></i>
+                    <h3>No data</h3>
+                    <p>Upload and process data to see the leaderboard</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── PAGE: SUPERVISOR ─── -->
+        <section class="page" id="page-supervisor">
+            <div class="page-header">
+                <div>
+                    <h2><i class="fas fa-shield-alt" style="color:var(--accent);margin-right:10px;"></i>Supervisor Panel</h2>
+                    <div class="subtitle" id="supervisorStatus">Login to upload new absence data</div>
+                </div>
+            </div>
+            <div id="supervisorContent">
+                <!-- Login form -->
+                <div class="login-container" id="loginForm">
+                    <i class="fas fa-lock" style="font-size:40px;color:var(--textMuted);margin-bottom:12px;"></i>
+                    <h3>Supervisor Login</h3>
+                    <p style="color:var(--textMuted);font-size:14px;margin:8px 0 0;">Enter password to access upload</p>
+                    <input type="password" id="supervisorPassword" placeholder="Password" />
+                    <button class="btn btn-primary" id="btnLogin">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <p style="color:var(--textMuted);font-size:12px;margin-top:12px;">Default: admin123</p>
+                </div>
+
+                <!-- Upload section (visible after login) -->
+                <div id="uploadSection" style="display:none;">
+                    <div class="upload-zone" style="margin-bottom:24px;">
+                        <div class="upload-box" id="supUploadLeave">
+                            <i class="fas fa-file-excel"></i>
+                            <div class="label">📄 All Leave File</div>
+                            <div class="sub">.xlsx — leave records</div>
+                            <input type="file" accept=".xlsx,.xls" id="supFileLeave" />
+                            <div class="upload-status" id="supStatusLeave">No file selected</div>
+                        </div>
+                        <div class="upload-box" id="supUploadCadre">
+                            <i class="fas fa-file-excel"></i>
+                            <div class="label">📋 Full Cadre Details</div>
+                            <div class="sub">.xlsx — employee master</div>
+                            <input type="file" accept=".xlsx,.xls" id="supFileCadre" />
+                            <div class="upload-status" id="supStatusCadre">No file selected</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="btnSupProcess" style="width:200px;">
+                        <i class="fas fa-upload"></i> Upload & Process
+                    </button>
+                    <button class="btn btn-danger" id="btnSupLogout" style="margin-left:12px;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <p style="color:var(--textMuted);font-size:13px;margin-top:16px;">
+                        <i class="fas fa-info-circle"></i> Uploaded data is stored only in this browser. To update for everyone, push new Excel files to the <code>data/</code> folder on GitHub.
+                    </p>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <!-- ─── TOAST ─── -->
     <div class="toast" id="toast"></div>
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIG – Your deployed Apps Script URLs
+        //  CONFIG
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        const LEAVE_FILE_URL = 'https://script.google.com/macros/s/AKfycbydtFfF0nO5jfSq_HyAZiGBObQzUzDILxWn1loNRnXMWwuXkLPO7wBqCrLKupwTBLwu8A/exec?action=getLeaveFile';
-        const CADRE_FILE_URL = 'https://script.google.com/macros/s/AKfycbydtFfF0nO5jfSq_HyAZiGBObQzUzDILxWn1loNRnXMWwuXkLPO7wBqCrLKupwTBLwu8A/exec?action=getCadreFile';
+        const LEAVE_FILE_URL = 'data/all_leave.xlsx';      // File in the repository
+        const CADRE_FILE_URL = 'data/cadre_details.xlsx';  // File in the repository
+        const SUPERVISOR_PASSWORD = 'admin123';
 
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  LEAVE TYPES & COLORS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const LEAVE_TYPES = [
             'Sick Leave', 'Short Leave', 'No Records', 'Authorized Leave',
             'Unauthorized Leave', 'Half Day', 'Day off', 'WFH'
@@ -721,46 +874,227 @@
             'Day off': '#42a5f5', 'WFH': '#ab47bc',
         };
 
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  STATE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         let state = {
-            employees: [], leaves: [], fromDate: null, toDate: null,
-            activeCategories: [...LEAVE_TYPES], currentDept: null, currentEmp: null, companyChart: null,
+            employees: [],
+            leaves: [],
+            fromDate: null,
+            toDate: null,
+            activeCategories: [...LEAVE_TYPES],
+            currentDept: null,
+            currentEmp: null,
+            companyChart: null,
         };
 
         const $ = (sel) => document.querySelector(sel);
         const $$ = (sel) => document.querySelectorAll(sel);
 
-        function toast(msg, type='info', duration=3200) {
+        const fileLeave = $('#fileLeave');
+        const fileCadre = $('#fileCadre');
+        const statusLeave = $('#statusLeave');
+        const statusCadre = $('#statusCadre');
+        const btnProcess = $('#btnProcess');
+        const btnClear = $('#btnClear');
+        const btnApplyDate = $('#btnApplyDate');
+        const fromDate = $('#fromDate');
+        const toDate = $('#toDate');
+        const deptSelector = $('#deptSelector');
+        const btnGoDept = $('#btnGoDept');
+        const empSearchInput = $('#empSearchInput');
+        const btnSearchEmp = $('#btnSearchEmp');
+
+        // Supervisor elements
+        const supFileLeave = $('#supFileLeave');
+        const supFileCadre = $('#supFileCadre');
+        const supStatusLeave = $('#supStatusLeave');
+        const supStatusCadre = $('#supStatusCadre');
+        const btnSupProcess = $('#btnSupProcess');
+        const btnSupLogout = $('#btnSupLogout');
+        const loginForm = $('#loginForm');
+        const uploadSection = $('#uploadSection');
+        const supervisorPassword = $('#supervisorPassword');
+        const btnLogin = $('#btnLogin');
+        const supervisorStatus = $('#supervisorStatus');
+
+        const LS_LEAVE_KEY = 'absence_dashboard_leave_data';
+        const LS_CADRE_KEY = 'absence_dashboard_cadre_data';
+        const LS_SUPERVISOR_LOGGED = 'absence_supervisor_logged_in';
+
+        // ── TOAST ──
+        function toast(msg, type = 'info', duration = 3200) {
             const el = $('#toast');
-            el.className = `toast show`;
-            el.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-exclamation-circle':'fa-info-circle'}"></i> ${msg}`;
-            el.style.borderColor = type==='success'?'#4caf50':type==='error'?'#f44336':'var(--border)';
+            el.className = 'toast show';
+            el.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${msg}`;
+            el.style.borderColor = type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : 'var(--border)';
             clearTimeout(el._timer);
             el._timer = setTimeout(() => el.classList.remove('show'), duration);
         }
 
-        // ── LOADING HELPERS ──
-        function showLoading() { $('#loadingOverlay').style.display = 'flex'; }
-        function hideLoading() { $('#loadingOverlay').style.display = 'none'; }
+        // ── FILE UPLOAD (manual, kept as fallback) ──
+        $('#uploadLeave').addEventListener('click', () => fileLeave.click());
+        $('#uploadCadre').addEventListener('click', () => fileCadre.click());
+
+        let leaveFileData = null;
+        let cadreFileData = null;
+
+        fileLeave.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: 'array' });
+                    leaveFileData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${leaveFileData.length} rows)</span>`;
+                    $('#uploadLeave').classList.add('uploaded');
+                    toast('Leave file loaded successfully', 'success');
+                } catch (err) {
+                    statusLeave.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
+                    toast('Error parsing leave file', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(f);
+        });
+
+        fileCadre.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: 'array' });
+                    cadreFileData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${cadreFileData.length} rows)</span>`;
+                    $('#uploadCadre').classList.add('uploaded');
+                    toast('Cadre file loaded successfully', 'success');
+                } catch (err) {
+                    statusCadre.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
+                    toast('Error parsing cadre file', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(f);
+        });
+
+        // ── SUPERVISOR UPLOAD (localStorage only) ──
+        let supLeaveData = null;
+        let supCadreData = null;
+
+        $('#supUploadLeave').addEventListener('click', () => supFileLeave.click());
+        $('#supUploadCadre').addEventListener('click', () => supFileCadre.click());
+
+        supFileLeave.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: 'array' });
+                    supLeaveData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    supStatusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${supLeaveData.length} rows)</span>`;
+                    $('#supUploadLeave').classList.add('uploaded');
+                } catch (err) {
+                    supStatusLeave.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
+                }
+            };
+            reader.readAsArrayBuffer(f);
+        });
+
+        supFileCadre.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: 'array' });
+                    supCadreData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    supStatusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${supCadreData.length} rows)</span>`;
+                    $('#supUploadCadre').classList.add('uploaded');
+                } catch (err) {
+                    supStatusCadre.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
+                }
+            };
+            reader.readAsArrayBuffer(f);
+        });
+
+        btnSupProcess.addEventListener('click', () => {
+            if (!supLeaveData || !supCadreData) {
+                toast('Please select both Excel files first.', 'error');
+                return;
+            }
+            localStorage.setItem(LS_LEAVE_KEY, JSON.stringify(supLeaveData));
+            localStorage.setItem(LS_CADRE_KEY, JSON.stringify(supCadreData));
+            toast('Data uploaded! Using stored data.', 'success');
+            loadDataFromLocalStorageOrFallback();
+        });
+
+        btnSupLogout.addEventListener('click', () => {
+            localStorage.removeItem(LS_SUPERVISOR_LOGGED);
+            supLeaveData = null;
+            supCadreData = null;
+            supStatusLeave.innerHTML = 'No file selected';
+            supStatusCadre.innerHTML = 'No file selected';
+            $('#supUploadLeave').classList.remove('uploaded');
+            $('#supUploadCadre').classList.remove('uploaded');
+            supFileLeave.value = '';
+            supFileCadre.value = '';
+            loginForm.style.display = 'block';
+            uploadSection.style.display = 'none';
+            supervisorStatus.textContent = 'Login to upload new absence data';
+            toast('Logged out from supervisor panel', 'info');
+        });
+
+        function checkSupervisorLogin() {
+            if (localStorage.getItem(LS_SUPERVISOR_LOGGED) === 'true') {
+                showUploadSection();
+            } else {
+                loginForm.style.display = 'block';
+                uploadSection.style.display = 'none';
+                supervisorStatus.textContent = 'Login to upload new absence data';
+            }
+        }
+
+        function showUploadSection() {
+            loginForm.style.display = 'none';
+            uploadSection.style.display = 'block';
+            supervisorStatus.textContent = 'Upload new Excel files (local browser only)';
+            supervisorPassword.value = '';
+        }
+
+        btnLogin.addEventListener('click', () => {
+            if (supervisorPassword.value === SUPERVISOR_PASSWORD) {
+                localStorage.setItem(LS_SUPERVISOR_LOGGED, 'true');
+                showUploadSection();
+                toast('Logged in as supervisor', 'success');
+            } else {
+                toast('Incorrect password', 'error');
+            }
+        });
+
+        supervisorPassword.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') btnLogin.click();
+        });
 
         // ── DATE PARSER ──
         function parseDate(dateStr) {
             if (!dateStr) return null;
-            const str = String(dateStr).trim();
+            const str = dateStr.trim();
             let d = null;
             let normalized = str.replace(/[\.\-]/g, '/');
             let parts = normalized.split('/');
             if (parts.length === 3) {
                 let day, month, year;
                 if (parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                    day = parseInt(parts[0],10); month = parseInt(parts[1],10)-1; year = parseInt(parts[2],10);
-                    if (!isNaN(day)&&!isNaN(month)&&!isNaN(year)) {
-                        const test = new Date(year,month,day);
+                    day = parseInt(parts[0], 10); month = parseInt(parts[1], 10) - 1; year = parseInt(parts[2], 10);
+                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                        const test = new Date(year, month, day);
                         if (!isNaN(test.getTime())) d = test;
                     }
-                } else if (parts[0].length===4 && parts[1].length===2 && parts[2].length===2) {
-                    year = parseInt(parts[0],10); month = parseInt(parts[1],10)-1; day = parseInt(parts[2],10);
-                    if (!isNaN(day)&&!isNaN(month)&&!isNaN(year)) {
-                        const test = new Date(year,month,day);
+                } else if (parts[0].length === 4 && parts[1].length === 2 && parts[2].length === 2) {
+                    year = parseInt(parts[0], 10); month = parseInt(parts[1], 10) - 1; day = parseInt(parts[2], 10);
+                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                        const test = new Date(year, month, day);
                         if (!isNaN(test.getTime())) d = test;
                     }
                 }
@@ -768,9 +1102,9 @@
             if (!d) {
                 const isNumeric = /^[0-9]+$/.test(str);
                 if (isNumeric) {
-                    const num = parseInt(str,10);
-                    if (num>0 && num<100000) {
-                        const excelEpoch = new Date(1899,11,30);
+                    const num = parseInt(str, 10);
+                    if (num > 0 && num < 100000) {
+                        const excelEpoch = new Date(1899, 11, 30);
                         const msPerDay = 86400000;
                         const dateObj = new Date(excelEpoch.getTime() + num * msPerDay);
                         if (!isNaN(dateObj.getTime())) d = dateObj;
@@ -784,22 +1118,10 @@
             return d;
         }
 
-        // ── WORKING DAYS ──
-        function getWorkingDays(from, to) {
-            let count = 0;
-            const d = new Date(from);
-            while (d <= to) {
-                const day = d.getDay();
-                if (day !== 0 && day !== 6) count++;
-                d.setDate(d.getDate() + 1);
-            }
-            return count || 1;
-        }
-
         // ── PROCESS DATA ──
-        function processData(leaveFileData, cadreFileData) {
+        function processData() {
             if (!leaveFileData || !cadreFileData) {
-                toast('No data available. Check the Drive files.', 'error');
+                toast('No data available.', 'error');
                 return;
             }
             try {
@@ -837,7 +1159,11 @@
                     const deptFinal = dept || (empMap[empNo] ? empMap[empNo].department : 'Unknown');
                     const nameFinal = name || (empMap[empNo] ? empMap[empNo].name : empNo);
                     leaves.push({
-                        date: d, dateStr: d.toISOString().slice(0,10), empNo, name: nameFinal, department: deptFinal,
+                        date: d,
+                        dateStr: d.toISOString().slice(0, 10),
+                        empNo,
+                        name: nameFinal,
+                        department: deptFinal,
                         leaveType: LEAVE_TYPES.includes(leaveType) ? leaveType : 'Other',
                     });
                 }
@@ -855,17 +1181,19 @@
                     const max = new Date(Math.max(...dates.map(d => d.getTime())));
                     state.fromDate = min;
                     state.toDate = max;
-                    $('#fromDate').value = min.toISOString().slice(0,10);
-                    $('#toDate').value = max.toISOString().slice(0,10);
+                    fromDate.value = min.toISOString().slice(0, 10);
+                    toDate.value = max.toISOString().slice(0, 10);
                 } else {
-                    const now = new Date(); const monthAgo = new Date(now);
-                    monthAgo.setMonth(monthAgo.getMonth()-1);
-                    state.fromDate = monthAgo; state.toDate = now;
-                    $('#fromDate').value = monthAgo.toISOString().slice(0,10);
-                    $('#toDate').value = now.toISOString().slice(0,10);
+                    const now = new Date();
+                    const monthAgo = new Date(now);
+                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                    state.fromDate = monthAgo;
+                    state.toDate = now;
+                    fromDate.value = monthAgo.toISOString().slice(0, 10);
+                    toDate.value = now.toISOString().slice(0, 10);
                     toast('No valid leave records found.', 'info');
                 }
-                $('#deptCount').textContent = [...new Set(employees.map(e=>e.department))].length;
+                $('#deptCount').textContent = [...new Set(employees.map(e => e.department))].length;
                 populateDeptSelector();
                 renderCategoryChips();
                 applyFilters(true);
@@ -876,18 +1204,92 @@
             }
         }
 
-        // ── GET FILTERED LEAVES ──
+        btnProcess.addEventListener('click', processData);
+
+        btnClear.addEventListener('click', () => {
+            state.employees = [];
+            state.leaves = [];
+            state.currentDept = null;
+            state.currentEmp = null;
+            leaveFileData = null;
+            cadreFileData = null;
+            fileLeave.value = '';
+            fileCadre.value = '';
+            statusLeave.innerHTML = 'No file uploaded';
+            statusCadre.innerHTML = 'No file uploaded';
+            $('#uploadLeave').classList.remove('uploaded');
+            $('#uploadCadre').classList.remove('uploaded');
+            $('#deptCount').textContent = '0';
+            $('#deptBadge').textContent = '—';
+            deptSelector.innerHTML = '<option value="">— Choose department —</option>';
+            renderAll();
+            toast('Cleared all data', 'info');
+        });
+
+        btnApplyDate.addEventListener('click', () => {
+            const from = new Date(fromDate.value);
+            const to = new Date(toDate.value);
+            if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+                toast('Please select valid dates', 'error');
+                return;
+            }
+            if (from > to) {
+                toast('From date must be before To date', 'error');
+                return;
+            }
+            state.fromDate = from;
+            state.toDate = to;
+            applyFilters(true);
+            toast('Date range updated', 'success');
+        });
+
+        // ── CATEGORY CHIPS ──
+        function renderCategoryChips() {
+            const targets = [$('#categoryFiltersCompany'), $('#categoryFiltersDept'), $('#categoryFiltersLB')];
+            const html = LEAVE_TYPES.map(type => {
+                const active = state.activeCategories.includes(type) ? 'active' : '';
+                const color = TYPE_COLORS[type] || '#999';
+                return `<span class="category-chip ${active}" data-type="${type}" style="border-color:${active ? color : 'var(--border)'};">
+                            <span class="dot" style="background:${color};"></span> ${type}</span>`;
+            }).join('');
+            for (const el of targets) if (el) {
+                el.innerHTML = html;
+                el.querySelectorAll('.category-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const type = chip.dataset.type;
+                        const idx = state.activeCategories.indexOf(type);
+                        if (idx > -1) state.activeCategories.splice(idx, 1);
+                        else state.activeCategories.push(type);
+                        renderCategoryChips();
+                        applyFilters(true);
+                    });
+                });
+            }
+        }
+
         function getFilteredLeaves() {
             if (!state.fromDate || !state.toDate) return [];
-            const from = new Date(state.fromDate); from.setHours(0,0,0,0);
-            const to = new Date(state.toDate); to.setHours(23,59,59,999);
+            const from = new Date(state.fromDate);
+            const to = new Date(state.toDate);
+            from.setHours(0, 0, 0, 0);
+            to.setHours(23, 59, 59, 999);
             return state.leaves.filter(l => {
                 const d = new Date(l.date);
                 return d >= from && d <= to && state.activeCategories.includes(l.leaveType);
             });
         }
 
-        // ── COMPUTE RATES ──
+        function getWorkingDays(from, to) {
+            let count = 0;
+            const d = new Date(from);
+            while (d <= to) {
+                const day = d.getDay();
+                if (day !== 0 && day !== 6) count++;
+                d.setDate(d.getDate() + 1);
+            }
+            return count || 1;
+        }
+
         function computeRates() {
             const filtered = getFilteredLeaves();
             const workingDays = getWorkingDays(state.fromDate, state.toDate);
@@ -918,12 +1320,12 @@
             return { empRates, deptMap, workingDays, filtered };
         }
 
-        // ── RENDER COMPANY CHART ──
+        // ── RENDER FUNCTIONS ──
         function renderCompanyChart() {
             const { deptMap } = computeRates();
-            const sorted = Object.entries(deptMap).sort((a,b) => b[1].rate - a[1].rate);
+            const sorted = Object.entries(deptMap).sort((a, b) => b[1].rate - a[1].rate);
             const labels = sorted.map(([name]) => name);
-            const rates = sorted.map(([,data]) => Math.min(data.rate, 100));
+            const rates = sorted.map(([, data]) => Math.min(data.rate, 100));
             const maxRate = rates.length ? Math.max(...rates) : 0;
             const suggestedMax = Math.min(100, Math.ceil((maxRate + 5) / 5) * 5);
             const ctx = document.getElementById('companyChart').getContext('2d');
@@ -946,16 +1348,17 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: { legend: { display: false },
+                    plugins: {
+                        legend: { display: false },
                         tooltip: { callbacks: { label: (ctx) => {
                             const val = ctx.parsed.x; const dept = ctx.label;
                             const info = deptMap[dept] || {};
-                            return `Rate: ${val.toFixed(1)}%  •  ${info.empCount||0} employees  •  ${info.totalLeaves||0} leave records`;
+                            return `Rate: ${val.toFixed(1)}%  •  ${info.empCount || 0} employees  •  ${info.totalLeaves || 0} leave records`;
                         }}}
                     },
                     scales: {
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#99a4c2', callback: v => v+'%' }, max: Math.max(10, suggestedMax+5) },
-                        y: { grid: { display: false }, ticks: { color: '#99a4c2', font: { weight:'500' } } }
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#99a4c2', callback: v => v + '%' }, max: Math.max(10, suggestedMax + 5) },
+                        y: { grid: { display: false }, ticks: { color: '#99a4c2', font: { weight: '500' } } }
                     },
                     onClick: (e, elements) => {
                         if (elements.length > 0) {
@@ -965,14 +1368,13 @@
                     }
                 }
             });
-            const fromStr = state.fromDate ? state.fromDate.toISOString().slice(0,10) : '—';
-            const toStr = state.toDate ? state.toDate.toISOString().slice(0,10) : '—';
+            const fromStr = state.fromDate ? state.fromDate.toISOString().slice(0, 10) : '—';
+            const toStr = state.toDate ? state.toDate.toISOString().slice(0, 10) : '—';
             $('#lbPeriod').textContent = `${fromStr} → ${toStr}`;
         }
 
-        // ── RENDER DEPARTMENT VIEW ──
         function renderDepartmentView(deptName, skipNavigation = false) {
-            if (!deptName) { deptName = $('#deptSelector').value; }
+            if (!deptName) deptName = deptSelector.value;
             if (!deptName) { toast('Please select a department', 'error'); return; }
             const { empRates, deptMap, workingDays } = computeRates();
             const deptData = deptMap[deptName];
@@ -985,7 +1387,7 @@
             $('#deptLeaveCount').textContent = deptData.totalLeaves;
             $('#deptWorkingDays').textContent = workingDays;
             const empsInDept = state.employees.filter(e => e.department === deptName);
-            const sortedEmps = empsInDept.map(e => ({ ...e, ...empRates[e.empNo] })).filter(e => e.rate !== undefined).sort((a,b) => b.rate - a.rate);
+            const sortedEmps = empsInDept.map(e => ({ ...e, ...empRates[e.empNo] })).filter(e => e.rate !== undefined).sort((a, b) => b.rate - a.rate);
             const list = $('#deptEmployeeList');
             if (sortedEmps.length === 0) {
                 list.innerHTML = `<div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
@@ -995,40 +1397,35 @@
             }
             let html = `<div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>`;
             for (const emp of sortedEmps) {
-                const rate = emp.rate || 0;
                 html += `<div class="list-row" data-empno="${emp.empNo}">
-                            <span><strong>${emp.name}</strong></span>
-                            <span>${emp.empNo}</span>
-                            <span>${emp.leaveCount||0}</span>
-                            <span class="rate">${rate.toFixed(1)}%</span>
+                            <span><strong>${emp.name}</strong></span><span>${emp.empNo}</span><span>${emp.leaveCount || 0}</span><span class="rate">${(emp.rate || 0).toFixed(1)}%</span>
                          </div>`;
             }
             list.innerHTML = html;
             list.querySelectorAll('.list-row').forEach(row => {
-                row.addEventListener('click', () => {
-                    const empNo = row.dataset.empno; state.currentEmp = empNo; renderEmployeeView(empNo);
-                });
+                row.addEventListener('click', () => { state.currentEmp = row.dataset.empno; renderEmployeeView(row.dataset.empno); });
             });
-            $('#deptSelector').value = deptName;
+            deptSelector.value = deptName;
             if (!skipNavigation) navigateTo('page-department');
         }
 
-        // ── RENDER EMPLOYEE VIEW ──
         function renderEmployeeView(empNo, skipNavigation = false) {
-            if (!empNo) { empNo = $('#empSearchInput').value.trim(); }
+            if (!empNo) empNo = empSearchInput.value.trim();
             if (!empNo) { toast('Please enter an Employee ID', 'error'); return; }
             const employee = state.employees.find(e => e.empNo === empNo);
             if (!employee) {
-                $('#employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-slash"></i><h3>Employee not found</h3><p>No employee with ID "${empNo}" in the cadre</p></div>`;
+                document.getElementById('employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-slash"></i><h3>Employee not found</h3><p>No employee with ID "${empNo}" in the cadre</p></div>`;
                 toast('Employee not found', 'error');
                 return;
             }
             state.currentEmp = empNo;
             const { empRates } = computeRates();
-            const empData = empRates[empNo]; const leaves = empData ? empData.leaves : []; const rate = empData ? empData.rate : 0; const leaveCount = empData ? empData.leaveCount : 0;
-            const profile = $('#employeeProfile');
-            const initials = employee.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-            profile.innerHTML = `
+            const empData = empRates[empNo];
+            const leaves = empData ? empData.leaves : [];
+            const rate = empData ? empData.rate : 0;
+            const leaveCount = empData ? empData.leaveCount : 0;
+            const initials = employee.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            document.getElementById('employeeProfile').innerHTML = `
                 <div class="emp-profile">
                     <div class="avatar">${initials}</div>
                     <div class="info">
@@ -1039,14 +1436,10 @@
                             <span><i class="fas fa-calendar-day"></i> ${leaveCount} leave records</span>
                         </div>
                     </div>
-                    <div class="absence-rate-big">
-                        ${rate.toFixed(1)}%
-                        <span class="label">Absence Rate</span>
-                    </div>
+                    <div class="absence-rate-big">${rate.toFixed(1)}%<span class="label">Absence Rate</span></div>
                 </div>
                 <div class="calendar-wrapper">
-                    <div class="cal-header">
-                        <div class="month-year" id="calMonthYear"></div>
+                    <div class="cal-header"><div class="month-year" id="calMonthYear"></div>
                         <div class="cal-nav">
                             <button id="calPrev"><i class="fas fa-chevron-left"></i></button>
                             <button id="calNext"><i class="fas fa-chevron-right"></i></button>
@@ -1059,108 +1452,77 @@
             let calDate = new Date(state.fromDate || new Date());
             calDate.setDate(1);
             function renderCalendar() {
-                const year = calDate.getFullYear(); const month = calDate.getMonth();
-                const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-                $('#calMonthYear').textContent = `${monthNames[month]} ${year}`;
+                const year = calDate.getFullYear(), month = calDate.getMonth();
+                $('#calMonthYear').textContent = `${['January','February','March','April','May','June','July','August','September','October','November','December'][month]} ${year}`;
                 const firstDay = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month+1, 0).getDate();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
                 const leaveMap = {};
                 for (const l of leaves) {
                     const d = new Date(l.date);
                     if (d.getFullYear() === year && d.getMonth() === month) {
-                        const key = d.getDate(); if (!leaveMap[key]) leaveMap[key] = []; leaveMap[key].push(l.leaveType);
+                        const key = d.getDate();
+                        if (!leaveMap[key]) leaveMap[key] = [];
+                        leaveMap[key].push(l.leaveType);
                     }
                 }
-                const grid = $('#calendarGrid'); let html = '';
-                const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-                for (const dn of dayNames) html += `<div class="day-name">${dn}</div>`;
-                for (let i=0; i<firstDay; i++) html += `<div class="day-cell empty"></div>`;
-                for (let d=1; d<=daysInMonth; d++) {
-                    const types = leaveMap[d] || []; const hasLeave = types.length > 0;
-                    const typeStr = types.join(', '); const colors = types.map(t => TYPE_COLORS[t]||'#999');
-                    const dotHtml = colors.map(c => `<span class="dot" style="background:${c};"></span>`).join('');
-                    const tooltip = types.length>0 ? `<div class="tooltip">${typeStr}</div>` : '';
-                    html += `<div class="day-cell ${hasLeave?'has-leave':''}">
+                const grid = $('#calendarGrid');
+                let html = '';
+                for (const dn of ['Su','Mo','Tu','We','Th','Fr','Sa']) html += `<div class="day-name">${dn}</div>`;
+                for (let i = 0; i < firstDay; i++) html += `<div class="day-cell empty"></div>`;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const types = leaveMap[d] || [];
+                    const hasLeave = types.length > 0;
+                    const dotHtml = types.map(t => `<span class="dot" style="background:${TYPE_COLORS[t] || '#999'};"></span>`).join('');
+                    html += `<div class="day-cell ${hasLeave ? 'has-leave' : ''}">
                                 <span class="date-num">${d}</span>
                                 ${hasLeave ? `<div style="display:flex;gap:3px;margin-top:2px;flex-wrap:wrap;justify-content:center;">${dotHtml}</div>` : ''}
-                                ${tooltip}
+                                ${hasLeave ? `<div class="tooltip">${types.join(', ')}</div>` : ''}
                             </div>`;
                 }
                 grid.innerHTML = html;
                 const usedTypes = [...new Set(leaves.map(l => l.leaveType))];
                 const legend = $('#calendarLegend');
-                if (usedTypes.length === 0) {
-                    legend.innerHTML = '<span style="color:var(--textMuted);font-size:13px;"><i class="fas fa-check-circle" style="color:#4caf50;"></i> No absences recorded for this employee in the selected period</span>';
-                } else {
-                    legend.innerHTML = usedTypes.map(type => `<span class="legend-item"><span class="swatch" style="background:${TYPE_COLORS[type]||'#999'};"></span>${type}</span>`).join('');
-                }
+                legend.innerHTML = usedTypes.length === 0
+                    ? '<span style="color:var(--textMuted);font-size:13px;"><i class="fas fa-check-circle" style="color:#4caf50;"></i> No absences recorded</span>'
+                    : usedTypes.map(type => `<span class="legend-item"><span class="swatch" style="background:${TYPE_COLORS[type]||'#999'};"></span>${type}</span>`).join('');
             }
             renderCalendar();
-            document.getElementById('calPrev').addEventListener('click', ()=>{ calDate.setMonth(calDate.getMonth()-1); renderCalendar(); });
-            document.getElementById('calNext').addEventListener('click', ()=>{ calDate.setMonth(calDate.getMonth()+1); renderCalendar(); });
-            document.getElementById('calToday').addEventListener('click', ()=>{ calDate = new Date(); calDate.setDate(1); renderCalendar(); });
-            $('#empSearchInput').value = empNo;
+            document.getElementById('calPrev').addEventListener('click', () => { calDate.setMonth(calDate.getMonth() - 1); renderCalendar(); });
+            document.getElementById('calNext').addEventListener('click', () => { calDate.setMonth(calDate.getMonth() + 1); renderCalendar(); });
+            document.getElementById('calToday').addEventListener('click', () => { calDate = new Date(); calDate.setDate(1); renderCalendar(); });
+            empSearchInput.value = empNo;
             if (!skipNavigation) navigateTo('page-employee');
             toast(`Showing ${employee.name} (${empNo})`, 'success');
         }
 
-        // ── RENDER LEADERBOARD ──
         function renderLeaderboard() {
             const { empRates } = computeRates();
-            const sorted = Object.values(empRates).filter(e => e.rate > 0).sort((a,b)=>b.rate-a.rate).slice(0,10);
+            const sorted = Object.values(empRates).filter(e => e.rate > 0).sort((a, b) => b.rate - a.rate).slice(0, 10);
             const table = $('#leaderboardTable');
             if (sorted.length === 0) {
                 table.innerHTML = `<div class="lb-header"><span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span></div>
-                                   <div class="empty-state" style="padding:40px 12px;"><i class="fas fa-chart-simple"></i><h3>No data</h3><p>No absence records found for the selected period &amp; categories</p></div>`;
+                                   <div class="empty-state" style="padding:40px 12px;"><i class="fas fa-chart-simple"></i><h3>No data</h3><p>No absence records found</p></div>`;
                 return;
             }
             let html = `<div class="lb-header"><span>#</span><span>Employee</span><span>Department</span><span>Emp No.</span><span>Absence Rate</span></div>`;
-            for (let i=0; i<sorted.length; i++) {
-                const emp = sorted[i]; const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+            sorted.forEach((emp, i) => {
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
                 html += `<div class="lb-row" data-empno="${emp.empNo}">
-                            <span class="rank">${medal}</span>
-                            <span><strong>${emp.name}</strong></span>
-                            <span>${emp.department}</span>
-                            <span>${emp.empNo}</span>
-                            <span class="rate">${emp.rate.toFixed(1)}%</span>
+                            <span class="rank">${medal}</span><span><strong>${emp.name}</strong></span><span>${emp.department}</span><span>${emp.empNo}</span><span class="rate">${emp.rate.toFixed(1)}%</span>
                          </div>`;
-            }
+            });
             table.innerHTML = html;
             table.querySelectorAll('.lb-row').forEach(row => {
-                row.addEventListener('click', ()=>{ const empNo = row.dataset.empno; state.currentEmp = empNo; renderEmployeeView(empNo); });
+                row.addEventListener('click', () => { state.currentEmp = row.dataset.empno; renderEmployeeView(row.dataset.empno); });
             });
         }
 
-        // ── POPULATE DEPT SELECTOR ──
         function populateDeptSelector() {
-            const depts = [...new Set(state.employees.map(e=>e.department))].filter(Boolean).sort();
-            const sel = $('#deptSelector'); sel.innerHTML = '<option value="">— Choose department —</option>';
-            for (const d of depts) sel.innerHTML += `<option value="${d}">${d}</option>`;
+            const depts = [...new Set(state.employees.map(e => e.department))].filter(Boolean).sort();
+            deptSelector.innerHTML = '<option value="">— Choose department —</option>';
+            depts.forEach(d => deptSelector.innerHTML += `<option value="${d}">${d}</option>`);
         }
 
-        // ── CATEGORY CHIPS ──
-        function renderCategoryChips() {
-            const targets = [$('#categoryFiltersCompany'), $('#categoryFiltersDept'), $('#categoryFiltersLB')];
-            const html = LEAVE_TYPES.map(type => {
-                const active = state.activeCategories.includes(type) ? 'active' : '';
-                const color = TYPE_COLORS[type]||'#999';
-                return `<span class="category-chip ${active}" data-type="${type}" style="border-color:${active ? color : 'var(--border)'};">
-                            <span class="dot" style="background:${color};"></span> ${type}</span>`;
-            }).join('');
-            for (const el of targets) if (el) {
-                el.innerHTML = html;
-                el.querySelectorAll('.category-chip').forEach(chip => {
-                    chip.addEventListener('click', () => {
-                        const type = chip.dataset.type;
-                        const idx = state.activeCategories.indexOf(type);
-                        if (idx>-1) state.activeCategories.splice(idx,1); else state.activeCategories.push(type);
-                        renderCategoryChips(); applyFilters(true);
-                    });
-                });
-            }
-        }
-
-        // ── APPLY FILTERS ──
         function applyFilters(skipNavigation = false) {
             if (state.employees.length === 0) return;
             renderCompanyChart();
@@ -1177,7 +1539,6 @@
             }
         }
 
-        // ── NAVIGATION ──
         function navigateTo(pageId) {
             $$('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(pageId);
@@ -1185,6 +1546,12 @@
             $$('.nav-item').forEach(n => n.classList.remove('active'));
             const navBtn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
             if (navBtn) navBtn.classList.add('active');
+            if (pageId === 'page-company' || pageId === 'page-department') {
+                $('#uploadZone').style.display = 'flex';
+            } else {
+                $('#uploadZone').style.display = 'none';
+            }
+            if (pageId === 'page-supervisor') checkSupervisorLogin();
         }
 
         $$('.nav-item').forEach(btn => {
@@ -1200,69 +1567,103 @@
                 }
                 if (page === 'page-employee' && state.currentEmp) renderEmployeeView(state.currentEmp);
                 else if (page === 'page-employee') {
-                    $('#employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an employee ID above or click a name from the department list</p></div>`;
+                    document.getElementById('employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-circle"></i><h3>Search for an employee</h3><p>Enter an employee ID above or click a name from the department list</p></div>`;
                 }
                 if (page === 'page-leaderboard') renderLeaderboard();
                 if (page === 'page-company') renderCompanyChart();
             });
         });
 
-        // ── EVENT LISTENERS ──
-        $('#btnApplyDate').addEventListener('click', () => {
-            const from = new Date($('#fromDate').value); const to = new Date($('#toDate').value);
-            if (isNaN(from.getTime())||isNaN(to.getTime())) { toast('Please select valid dates','error'); return; }
-            if (from > to) { toast('From date must be before To date','error'); return; }
-            state.fromDate = from; state.toDate = to; applyFilters(true); toast('Date range updated','success');
-        });
-        $('#btnGoDept').addEventListener('click', () => {
-            const dept = $('#deptSelector').value;
+        btnGoDept.addEventListener('click', () => {
+            const dept = deptSelector.value;
             if (dept) { state.currentDept = dept; renderDepartmentView(dept); }
-            else toast('Please select a department','error');
+            else toast('Please select a department', 'error');
         });
-        $('#btnSearchEmp').addEventListener('click', () => {
-            const val = $('#empSearchInput').value.trim();
-            if (val) renderEmployeeView(val); else toast('Please enter an Employee ID','error');
-        });
-        $('#empSearchInput').addEventListener('keydown', e => { if (e.key==='Enter') $('#btnSearchEmp').click(); });
 
-        // ──────────────────────────────────────────────
-        //  FIXED EXCEL LOADER – uses arrayBuffer directly
-        // ──────────────────────────────────────────────
+        btnSearchEmp.addEventListener('click', () => {
+            const val = empSearchInput.value.trim();
+            if (val) renderEmployeeView(val);
+            else toast('Please enter an Employee ID', 'error');
+        });
+        empSearchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') btnSearchEmp.click(); });
+
+        // ── DATA LOADING FROM URL ──
         async function loadExcelFromUrl(url) {
             const response = await fetch(url);
-            if (!response.ok) throw new Error(`Could not fetch ${url}`);
-            const buffer = await response.arrayBuffer();   // ✅ binary, no text corruption
+            if (!response.ok) throw new Error(`File not found: ${url}`);
+            const buffer = await response.arrayBuffer();
             const workbook = XLSX.read(buffer, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            return XLSX.utils.sheet_to_json(sheet);
+            return XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
         }
 
-        async function loadDataFromDrive() {
-            showLoading();
+        function loadDataFromLocalStorageOrFallback() {
+            const storedLeave = localStorage.getItem(LS_LEAVE_KEY);
+            const storedCadre = localStorage.getItem(LS_CADRE_KEY);
+            if (storedLeave && storedCadre) {
+                try {
+                    leaveFileData = JSON.parse(storedLeave);
+                    cadreFileData = JSON.parse(storedCadre);
+                    statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from supervisor upload (${leaveFileData.length} rows)</span>`;
+                    statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from supervisor upload (${cadreFileData.length} rows)</span>`;
+                    $('#uploadLeave').classList.add('uploaded');
+                    $('#uploadCadre').classList.add('uploaded');
+                    processData();
+                    return;
+                } catch (e) { console.warn('localStorage data corrupted'); }
+            }
+            autoLoadFromUrls();
+        }
+
+        async function autoLoadFromUrls() {
             try {
                 const [leaveData, cadreData] = await Promise.all([
                     loadExcelFromUrl(LEAVE_FILE_URL),
                     loadExcelFromUrl(CADRE_FILE_URL)
                 ]);
-                processData(leaveData, cadreData);
+                leaveFileData = leaveData;
+                cadreFileData = cadreData;
+                statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from server (${leaveData.length} rows)</span>`;
+                statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from server (${cadreData.length} rows)</span>`;
+                $('#uploadLeave').classList.add('uploaded');
+                $('#uploadCadre').classList.add('uploaded');
+                processData();
             } catch (err) {
                 console.error(err);
-                toast('Failed to load files from Drive. Check sharing settings.', 'error');
-            } finally {
-                hideLoading();
+                toast('Could not load Excel files from data folder. Ask supervisor to push files to GitHub.', 'error');
             }
+        }
+
+        function renderAll() {
+            if (state.employees.length === 0) {
+                if (state.companyChart) { state.companyChart.destroy(); state.companyChart = null; }
+                document.getElementById('employeeProfile').innerHTML = `<div class="empty-state" style="padding:40px 12px;"><i class="fas fa-user-circle"></i><h3>No data loaded</h3><p>Upload Excel files or push to GitHub</p></div>`;
+                $('#deptEmployeeList').innerHTML = `<div class="list-header"><span>Employee</span><span>Emp No.</span><span>Leave Days</span><span>Absence Rate</span></div>
+                    <div class="empty-state" style="padding:32px 12px;"><i class="fas fa-inbox"></i><h3>No data</h3><p>Upload and process data first</p></div>`;
+                $('#deptAbsenceRate,#deptEmpCount,#deptLeaveCount,#deptWorkingDays').text('—');
+                $('#deptSubtitle').text('Select a department from the company chart or use the dropdown');
+                $('#lbPeriod').text('—');
+                $('#deptBadge').text('—');
+                return;
+            }
+            applyFilters(true);
         }
 
         // ── INIT ──
         (function init() {
-            const now = new Date(); const monthAgo = new Date(now);
-            monthAgo.setMonth(monthAgo.getMonth()-1);
-            $('#fromDate').value = monthAgo.toISOString().slice(0,10);
-            $('#toDate').value = now.toISOString().slice(0,10);
-            state.fromDate = monthAgo; state.toDate = now;
+            const now = new Date();
+            const monthAgo = new Date(now);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            fromDate.value = monthAgo.toISOString().slice(0, 10);
+            toDate.value = now.toISOString().slice(0, 10);
+            state.fromDate = monthAgo;
+            state.toDate = now;
             renderCategoryChips();
-            loadDataFromDrive();
+            loadDataFromLocalStorageOrFallback();
         })();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { empSearchInput.value = ''; empSearchInput.blur(); }
+        });
     </script>
 </body>
 </html>
