@@ -636,7 +636,7 @@
             <span>Leaderboard</span>
             <span class="badge">Top 10</span>
         </button>
-        <!-- NEW: Supervisor page -->
+        <!-- Supervisor page (NEW) -->
         <button class="nav-item" data-page="page-supervisor">
             <i class="fas fa-shield-alt"></i>
             <span>Supervisor</span>
@@ -648,32 +648,6 @@
 
     <!-- ─── MAIN ─── -->
     <main class="main" id="mainContent">
-
-        <!-- ── UPLOAD ZONE (only visible on Company/Department pages) ── -->
-        <div class="upload-zone" id="uploadZone">
-            <div class="upload-box" id="uploadLeave">
-                <i class="fas fa-file-excel"></i>
-                <div class="label">📄 All Leave File</div>
-                <div class="sub">.xlsx — leave records</div>
-                <input type="file" accept=".xlsx,.xls" id="fileLeave" />
-                <div class="upload-status" id="statusLeave">No file uploaded</div>
-            </div>
-            <div class="upload-box" id="uploadCadre">
-                <i class="fas fa-file-excel"></i>
-                <div class="label">📋 Full Cadre Details</div>
-                <div class="sub">.xlsx — employee master</div>
-                <input type="file" accept=".xlsx,.xls" id="fileCadre" />
-                <div class="upload-status" id="statusCadre">No file uploaded</div>
-            </div>
-            <div class="upload-actions">
-                <button class="btn btn-primary" id="btnProcess">
-                    <i class="fas fa-play"></i> Process Data
-                </button>
-                <button class="btn btn-danger" id="btnClear">
-                    <i class="fas fa-trash"></i> Clear
-                </button>
-            </div>
-        </div>
 
         <!-- ─── PAGE: COMPANY ─── -->
         <section class="page active" id="page-company">
@@ -796,7 +770,7 @@
             </div>
         </section>
 
-        <!-- ─── PAGE: SUPERVISOR (NEW) ─── -->
+        <!-- ─── PAGE: SUPERVISOR ─── -->
         <section class="page" id="page-supervisor">
             <div class="page-header">
                 <div>
@@ -895,17 +869,11 @@
         };
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  DOM REFS
+        //  DOM REFS (only the ones still needed)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const $ = (sel) => document.querySelector(sel);
         const $$ = (sel) => document.querySelectorAll(sel);
 
-        const fileLeave = $('#fileLeave');
-        const fileCadre = $('#fileCadre');
-        const statusLeave = $('#statusLeave');
-        const statusCadre = $('#statusCadre');
-        const btnProcess = $('#btnProcess');
-        const btnClear = $('#btnClear');
         const btnApplyDate = $('#btnApplyDate');
         const fromDate = $('#fromDate');
         const toDate = $('#toDate');
@@ -945,55 +913,6 @@
             clearTimeout(el._timer);
             el._timer = setTimeout(() => el.classList.remove('show'), duration);
         }
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  FILE UPLOAD (manual – kept as fallback)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        $('#uploadLeave').addEventListener('click', () => fileLeave.click());
-        $('#uploadCadre').addEventListener('click', () => fileCadre.click());
-
-        let leaveFileData = null;
-        let cadreFileData = null;
-
-        fileLeave.addEventListener('change', (e) => {
-            const f = e.target.files[0];
-            if (!f) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const wb = XLSX.read(ev.target.result, { type: 'array' });
-                    const sheet = wb.Sheets[wb.SheetNames[0]];
-                    leaveFileData = XLSX.utils.sheet_to_json(sheet);
-                    statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${leaveFileData.length} rows)</span>`;
-                    $('#uploadLeave').classList.add('uploaded');
-                    toast('Leave file loaded successfully', 'success');
-                } catch (err) {
-                    statusLeave.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
-                    toast('Error parsing leave file', 'error');
-                }
-            };
-            reader.readAsArrayBuffer(f);
-        });
-
-        fileCadre.addEventListener('change', (e) => {
-            const f = e.target.files[0];
-            if (!f) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const wb = XLSX.read(ev.target.result, { type: 'array' });
-                    const sheet = wb.Sheets[wb.SheetNames[0]];
-                    cadreFileData = XLSX.utils.sheet_to_json(sheet);
-                    statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> ${f.name} (${cadreFileData.length} rows)</span>`;
-                    $('#uploadCadre').classList.add('uploaded');
-                    toast('Cadre file loaded successfully', 'success');
-                } catch (err) {
-                    statusCadre.innerHTML = `<span class="err"><i class="fas fa-times"></i> Error parsing</span>`;
-                    toast('Error parsing cadre file', 'error');
-                }
-            };
-            reader.readAsArrayBuffer(f);
-        });
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  SUPERVISOR UPLOAD
@@ -1101,9 +1020,6 @@
             if (e.key === 'Enter') btnLogin.click();
         });
 
-        // Initialize supervisor page visibility
-        $('#page-supervisor').addEventListener('transitionend', checkSupervisorLogin); // not needed, we call on navigation
-
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  DATE PARSER (supports DD.MM.YYYY, Excel serial, etc.)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1162,9 +1078,9 @@
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  PROCESS DATA
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function processData() {
+        function processData(leaveFileData, cadreFileData) {
             if (!leaveFileData || !cadreFileData) {
-                toast('Please upload both Excel files first.', 'error');
+                toast('No data available. Please upload via Supervisor panel.', 'error');
                 return;
             }
 
@@ -1263,31 +1179,6 @@
                 toast('Error processing data: ' + err.message, 'error');
             }
         }
-
-        btnProcess.addEventListener('click', processData);
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CLEAR
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        btnClear.addEventListener('click', () => {
-            state.employees = [];
-            state.leaves = [];
-            state.currentDept = null;
-            state.currentEmp = null;
-            leaveFileData = null;
-            cadreFileData = null;
-            fileLeave.value = '';
-            fileCadre.value = '';
-            statusLeave.innerHTML = 'No file uploaded';
-            statusCadre.innerHTML = 'No file uploaded';
-            $('#uploadLeave').classList.remove('uploaded');
-            $('#uploadCadre').classList.remove('uploaded');
-            $('#deptCount').textContent = '0';
-            $('#deptBadge').textContent = '—';
-            deptSelector.innerHTML = '<option value="">— Choose department —</option>';
-            renderAll();
-            toast('Cleared all data', 'info');
-        });
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  DATE RANGE
@@ -1814,13 +1705,6 @@
             const navBtn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
             if (navBtn) navBtn.classList.add('active');
 
-            // Show/hide the main upload zone (only on Company/Department pages)
-            if (pageId === 'page-company' || pageId === 'page-department') {
-                $('#uploadZone').style.display = 'flex';
-            } else {
-                $('#uploadZone').style.display = 'none';
-            }
-
             // If navigating to supervisor page, check login status
             if (pageId === 'page-supervisor') {
                 checkSupervisorLogin();
@@ -1921,13 +1805,10 @@
 
             if (storedLeave && storedCadre) {
                 try {
-                    leaveFileData = JSON.parse(storedLeave);
-                    cadreFileData = JSON.parse(storedCadre);
-                    statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from supervisor upload (${leaveFileData.length} rows)</span>`;
-                    statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from supervisor upload (${cadreFileData.length} rows)</span>`;
-                    $('#uploadLeave').classList.add('uploaded');
-                    $('#uploadCadre').classList.add('uploaded');
-                    processData();
+                    const leaveData = JSON.parse(storedLeave);
+                    const cadreData = JSON.parse(storedCadre);
+                    toast('Using supervisor-uploaded data.', 'info');
+                    processData(leaveData, cadreData);
                     return;
                 } catch (e) {
                     console.warn('localStorage data corrupted, falling back to server files');
@@ -1945,18 +1826,11 @@
                     loadExcelFromUrl(CADRE_FILE_URL),
                 ]);
 
-                leaveFileData = leaveData;
-                cadreFileData = cadreData;
-
-                statusLeave.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from server (${leaveData.length} rows)</span>`;
-                statusCadre.innerHTML = `<span class="ok"><i class="fas fa-check"></i> Loaded from server (${cadreData.length} rows)</span>`;
-                $('#uploadLeave').classList.add('uploaded');
-                $('#uploadCadre').classList.add('uploaded');
-
-                processData();
+                toast('Loaded pre‑stored files from server.', 'success');
+                processData(leaveData, cadreData);
             } catch (error) {
                 console.error('Auto‑load failed:', error);
-                toast('Could not load pre‑stored Excel files. You can upload them manually.', 'error');
+                toast('No data found. Please ask the supervisor to upload files.', 'error');
             }
         }
 
@@ -1973,7 +1847,7 @@
                             <div class="empty-state" style="padding:40px 12px;">
                                 <i class="fas fa-user-circle"></i>
                                 <h3>No data loaded</h3>
-                                <p>Upload Excel files and process data</p>
+                                <p>Please ask the supervisor to upload data.</p>
                             </div>
                         `;
                 const list = $('#deptEmployeeList');
@@ -1982,7 +1856,7 @@
                             <div class="empty-state" style="padding:32px 12px;">
                                 <i class="fas fa-inbox"></i>
                                 <h3>No data</h3>
-                                <p>Upload and process data first</p>
+                                <p>Supervisor upload required</p>
                             </div>
                         `;
                 $('#deptAbsenceRate').textContent = '—';
